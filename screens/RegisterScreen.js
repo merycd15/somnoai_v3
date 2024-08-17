@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import {SafeAreaView, StyleSheet, TextInput, View, Image, Text, TouchableOpacity, Button } from 'react-native';
-// import { launchImageLibrary } from 'react-native-image-picker';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-// import ProfileScreen from './ProfileScreen';
+import React, { useState } from 'react';
+import { View, TextInput, Button, Text, StyleSheet, Alert, Picker } from 'react-native';
+import axios from 'axios';
 
-const RegisterScreen = ({navigation}) => {
-  const [error, setError] = useState(''); 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [surname, setSurname] = React.useState('');
-  const [telephone, setTelephone] = React.useState('');
-  const [age, setAge] = React.useState('');
-  const [weight, setWeight] = React.useState('');
-  const [height, setHeight] = React.useState('');
-  const [medicalCare, setMedicalCare] = React.useState('');  
+const RegistroScreen = () => {
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [anio, setAnio] = useState('2000'); 
+  const [mes, setMes] = useState('01'); 
+  const [dia, setDia] = useState('01'); 
+  const [genero, setGenero] = useState('');
+  const [altura, setAltura] = useState('');
+  const [peso, setPeso] = useState('');
+  const [obraSocial, setObraSocial] = useState('');
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'));
 
   // useEffect(() => {
   //   GoogleSignin.configure({
@@ -43,125 +47,131 @@ const RegisterScreen = ({navigation}) => {
   //   }
   // };
 
-  const validateEmail = (email) => {
-    // Expresión regular para validar el formato del correo electrónico
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
+  const handleSubmit = async () => {
+    const fechaNacimiento = `${anio}-${mes}-${dia}`;
 
-  const validateInput = () => {
-    setError('');
-    if (!validateEmail(email)) {
-      setError('El correo electrónico no es válido.');
+    if (!nombre || !apellido || !username || !email || !password || !anio || !mes || !dia || !genero || !altura || !peso) {
+      Alert.alert('Error', 'Todos los campos son obligatorios.');
       return;
     }
-    if (!password || !name || !surname || !telephone || !age || !weight || !height || !medicalCare) {
-      setError('Todos los campos deben estar llenos.');
-      return;
-    }
-    console.log('Datos válidos:', { email, password, name, surname, telephone, age, weight, height, medicalCare });
-  };
 
-    // // useEffect para cargar los datos al montar el componente
-    // useEffect(() => {
-    //   // Simulando una llamada a una API
-    //   fetch('https://miapi.com/perfil')  // URL de tu API
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       setEmail(data.email);
-    //       setPassword(data.password); // Evita hacer esto en producción
-    //       setName(data.name);
-    //       setSurname(data.surname);
-    //       setTelephone(data.telephone);
-    //       setAge(data.age);
-    //       setWeight(data.weight);
-    //       setHeight(data.height);
-    //       setMedicalCare(data.medicalCare);
-    //       setAvatarUri(data.avatarUri); // Supongamos que la API también devuelve la URL de la imagen
-    //     })
-    //     .catch(error => {
-    //       console.error('Error al obtener los datos del perfil:', error);
-    //     });
-    // }, []);
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/SomnoAI/crearUsuario/', {
+        nombre,
+        apellido,
+        username,
+        email,
+        password,
+        fecha_nacimiento: fechaNacimiento,
+        genero,
+        altura,
+        peso,
+        obra_social: obraSocial
+      });
+
+      Alert.alert('Éxito', response.data.message);
+    } catch (error) {
+      Alert.alert('Error', error.response ? error.response.data.error : 'Hubo un problema al crear el usuario.');
+    }
+  };
 
   return (
-    <SafeAreaView>
-      <View style={styles.header}>
-        <Text style={styles.title}>SomnoAI</Text>
-      </View>
-      <View>
-        <Text style={styles.subtitle}>Registrate</Text>
-      </View>
-      {/* {error ? <Text style={styles.errorText}>{error}</Text> : null} */}
+    <View style={styles.container}>
+      <Text style={styles.label}>Nombre:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setEmail}
+        value={nombre}
+        onChangeText={setNombre}
+      />
+      <Text style={styles.label}>Apellido:</Text>
+      <TextInput
+        style={styles.input}
+        value={apellido}
+        onChangeText={setApellido}
+      />
+      <Text style={styles.label}>Username:</Text>
+      <TextInput
+        style={styles.input}
+        value={username}
+        onChangeText={setUsername}
+      />
+      <Text style={styles.label}>Email:</Text>
+      <TextInput
+        style={styles.input}
         value={email}
-        placeholder="Correo electrónico"
-        keyboardType="email-address"
+        onChangeText={setEmail}
+        keyboardType='email-address'
       />
+      <Text style={styles.label}>Contraseña:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setPassword}
         value={password}
-        placeholder="Contraseña"
-        keyboardType="default"
-        secureTextEntry={true}
+        onChangeText={setPassword}
+        secureTextEntry
       />
+      <Text style={styles.label}>Fecha de Nacimiento:</Text>
+      <View style={styles.datePickerContainer}>
+        <Picker
+          selectedValue={anio}
+          style={styles.picker}
+          onValueChange={(itemValue) => setAnio(itemValue)}
+        >
+          {years.map(year => (
+            <Picker.Item key={year} label={year.toString()} value={year.toString()} />
+          ))}
+        </Picker>
+        <Picker
+          selectedValue={mes}
+          style={styles.picker}
+          onValueChange={(itemValue) => setMes(itemValue)}
+        >
+          {months.map(month => (
+            <Picker.Item key={month} label={month} value={month} />
+          ))}
+        </Picker>
+        <Picker
+          selectedValue={dia}
+          style={styles.picker}
+          onValueChange={(itemValue) => setDia(itemValue)}
+        >
+          {days.map(day => (
+            <Picker.Item key={day} label={day} value={day} />
+          ))}
+        </Picker>
+      </View>
+      <Text style={styles.label}>Género:</Text>
+      <Picker
+        selectedValue={genero}
+        style={styles.picker}
+        onValueChange={(itemValue) => setGenero(itemValue)}
+      >
+        <Picker.Item label="Selecciona tu género" value="" />
+        <Picker.Item label="Masculino" value="M" />
+        <Picker.Item label="Femenino" value="F" />
+        <Picker.Item label="Otro" value="O" />
+      </Picker>
+      <Text style={styles.label}>Altura (cm):</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setName}
-        value={name}
-        placeholder="Nombre"
-        keyboardType="default"
+        value={altura}
+        onChangeText={setAltura}
+        keyboardType='numeric'
       />
+      <Text style={styles.label}>Peso (kg):</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setSurname}
-        value={surname}
-        placeholder="Apellido"
-        keyboardType="default"
+        value={peso}
+        onChangeText={setPeso}
+        keyboardType='numeric'
       />
+      <Text style={styles.label}>Obra Social:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setTelephone}
-        value={telephone}
-        placeholder="Teléfono"
-        keyboardType="phone-pad"
+        value={obraSocial}
+        onChangeText={setObraSocial}
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={setAge}
-        value={age}
-        placeholder="Edad"
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setWeight}
-        value={weight}
-        placeholder="Peso"
-        keyboardType="decimal-pad"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setHeight}
-        value={height}
-        placeholder="Altura"
-        keyboardType="decimal-pad"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setMedicalCare}
-        value={medicalCare}
-        placeholder="Obra social"
-        keyboardType="default"
-      />
-      {/* <Button style={styles.button} title="Registrarse" onPress={validateInput} /> */}
-      <TouchableOpacity style={styles.button} onPress={validateInput}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-      <Text style={styles.texto}> 
+      <Button title="Crear Usuario" onPress={handleSubmit} />
+       <Text style={styles.texto}> 
         Ya tenés cuenta? <Text style={styles.link} onPress={() => navigation.navigate('Profile')}>Inicia sesión</Text>
       </Text>
       {/* Parte coninua con Google */}
@@ -174,97 +184,40 @@ const RegisterScreen = ({navigation}) => {
           style={styles.googleIcon}
         />
       </TouchableOpacity> */}
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
+    padding: 16,
     justifyContent: 'center',
-    marginVertical: 20,
-    marginTop: 40,
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  title: {
-    fontSize: 60,
-    fontWeight: '800',
-    marginVertical: 10,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 25,
-    fontWeight: '600',
-    marginLeft: 10,
-    marginVertical: 10,
-    textAlign: 'left',
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
   },
   input: {
-    height: 40,
-    margin: 12,
     borderWidth: 1,
-    padding: 10,
-    borderColor: '#ccc', // Color del borde
-    borderWidth: 2, // Grosor del borde
-    borderRadius: 15, // Radio de los bordes
-    paddingHorizontal: 15, // Espacio interno a los lados
-    fontSize: 16,
+    borderColor: '#ccc',
+    padding: 8,
+    marginBottom: 16,
+    borderRadius: 4,
   },
-  editIcon: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#007bff',
-    borderRadius: 12,
-    padding: 4,
+  picker: {
+    height: 50,
+    width: 100,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 16,
+    borderRadius: 4,
   },
-  errorText: {
-    marginLeft: 10,
-    color: 'red',
-  },
-  button: {
-    width: '95%', // Ancho específico del botón
-    height: 50, // Altura del botón
-    borderRadius: 25, // Radio de los bordes
-    backgroundColor: '#007BFF', // Color de fondo del botón
-    alignItems: 'center', // Centra el texto en el botón
-    justifyContent: 'center', // Centra el contenido verticalmente
-    marginHorizontal: 'auto',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  texto: {
-    alignItems: 'center', // Centra el texto en el botón
-    justifyContent: 'center', // Centra el contenido verticalmente
-    marginHorizontal: 'auto',
-  },
-  link: {
-    color: 'blue', // Color del enlace
-  },
-  googleButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FF4B3B',
-    borderRadius: 50, // Redondeado completo para un círculo
-    width: 60, // Ancho del botón
-    height: 60, // Altura del botón
-    marginVertical: 10,
-  },
-  googleIcon: {
-    width: 30, // Ancho del ícono
-    height: 30, // Altura del ícono
+  datePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
 });
 
-export default RegisterScreen;
+export default RegistroScreen;
