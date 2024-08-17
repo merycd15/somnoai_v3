@@ -72,6 +72,7 @@ const RegistroScreen = ({navigation}) => {
       navigation.navigate('Login')
     } catch (error) {
       Alert.alert('Error', error.response ? error.response.data.error : 'Hubo un problema al crear el usuario.');
+      navigation.navigate('Login')
     }
   };
 

@@ -1,83 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import {SafeAreaView, StyleSheet, TextInput, View, Image, Text, TouchableOpacity, Button } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from 'react-native';
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const LoginScreen = ({navigation}) => {
-  const [error, setError] = useState(''); 
-  // const [avatarUri, setAvatarUri] = useState('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x');
-  const [email, setEmail] = React.useState('');
+const LoginScreen = ({ navigation }) => {
+  const [error, setError] = useState('');
+  const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para controlar la visibilidad de la contraseña
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // const [name, setName] = React.useState('');
-  // const [surname, setSurname] = React.useState('');
-  // const [telephone, setTelephone] = React.useState('');
-  // const [age, setAge] = React.useState('');
-  // const [weight, setWeight] = React.useState('');
-  // const [height, setHeight] = React.useState('');
-  // const [medicalCare, setMedicalCare] = React.useState('');  
-
-  const validateEmail = (email) => {
-    // Expresión regular para validar el formato del correo electrónico
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
-
-  const validateInput = () => {
-    setError('');
-    if (!validateEmail(email)) {
-      setError('El correo electrónico no es válido.');
+ 
+  const handleLogin = async () => {
+    if (!(username)) {
+      setError('El username es obligatorio.');
       return;
     }
-    // if (!password || !name || !surname || !telephone || !age || !weight || !height || !medicalCare) {
-    //   setError('Todos los campos deben estar llenos.');
-    //   return;
-    // }
-    console.log('Datos válidos:', { email, password });
+    if (!password) {
+      setError('La contraseña es obligatoria.');
+      return;
+    }
+  
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/SomnoAI/Login/', {
+        username,
+        password
+      });
+  
+      if (response.data.message === 'Inicio de sesión exitoso.') {
+        Alert.alert('Éxito', 'Inicio de sesión exitoso.');
+        navigation.navigate('Home');
+      } else {
+        setError(response.data.error || 'Error en el inicio de sesión.');
+      }
+    } catch (error) {
+      console.error('Error en el login:', error);
+      setError('Hubo un problema con el inicio de sesión.');
+    }
   };
 
   const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible); // Alterna la visibilidad de la contraseña
+    setIsPasswordVisible(!isPasswordVisible);
   };
-
-    // // useEffect para cargar los datos al montar el componente
-    // useEffect(() => {
-    //   // Simulando una llamada a una API
-    //   fetch('https://miapi.com/perfil')  // URL de tu API
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       setEmail(data.email);
-    //       setPassword(data.password); // Evita hacer esto en producción
-    //       setName(data.name);
-    //       setSurname(data.surname);
-    //       setTelephone(data.telephone);
-    //       setAge(data.age);
-    //       setWeight(data.weight);
-    //       setHeight(data.height);
-    //       setMedicalCare(data.medicalCare);
-    //       setAvatarUri(data.avatarUri); // Supongamos que la API también devuelve la URL de la imagen
-    //     })
-    //     .catch(error => {
-    //       console.error('Error al obtener los datos del perfil:', error);
-    //     });
-    // }, []);
-    // const handleImagePicker = () => {
-    //   const options = {
-    //     mediaType: 'photo',
-    //     quality: 1,
-    //   };
-    //   launchImageLibrary(options, response => {
-    //     if (response.didCancel) {
-    //       console.log('El usuario canceló la selección de imagen');
-    //     } else if (response.errorMessage) {
-    //       console.log('Error:', response.errorMessage);
-    //     } else {
-    //       const uri = response.assets[0].uri;
-    //       setAvatarUri(uri);  // Actualiza el estado con la nueva imagen
-    //     }
-    //   });
-    // };
 
   return (
     <SafeAreaView>
@@ -90,10 +53,10 @@ const LoginScreen = ({navigation}) => {
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TextInput
         style={styles.input}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Correo electrónico"
-        keyboardType="email-address"
+        onChangeText={setUsername}
+        value={username}
+        placeholder="Nombre de Usuario"
+        keyboardType="name"
       />
       <View style={styles.passwordContainer}>
         <TextInput
@@ -101,40 +64,28 @@ const LoginScreen = ({navigation}) => {
           onChangeText={setPassword}
           value={password}
           placeholder="Contraseña"
-          secureTextEntry={!isPasswordVisible} // Controla si el texto es seguro (oculto) o no
+          secureTextEntry={!isPasswordVisible}
         />
         <TouchableOpacity onPress={togglePasswordVisibility}>
-          <Icon 
-            name={isPasswordVisible ? "visibility" : "visibility-off"} 
-            size={24} 
-            color="grey" 
+          <Icon
+            name={isPasswordVisible ? 'visibility' : 'visibility-off'}
+            size={24}
+            color="grey"
           />
         </TouchableOpacity>
       </View>
-      
-      <Text style={styles.texto} onPress={() => navigation.navigate('RecoverPassword')}> 
+      <Text style={styles.texto} onPress={() => navigation.navigate('RecoverPassword')}>
         ¿Olvidaste tu contraseña?
       </Text>
-
-      <Text style={styles.texto} onPress={() => navigation.navigate('Register')}> 
+      <Text style={styles.texto} onPress={() => navigation.navigate('Register')}>
         ¿Deseas registrarte?
       </Text>
-
-      {/* <Button title="Enviar" onPress={validateInput} /> */}
-      {/* <TouchableOpacity style={styles.button} onPress={validateInput}> */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      {/* Parte coninua con Google */}
-      <Text style={styles.textoGoogle}> 
+      <Text style={styles.textoGoogle}>
         O continúa con
       </Text>
-      {/* <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
-        <Image
-          source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg' }}
-          style={styles.googleIcon}
-        />
-      </TouchableOpacity> */}
     </SafeAreaView>
   );
 };
