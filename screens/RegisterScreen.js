@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert, Picker } from 'react-native';
 import axios from 'axios';
 
-const RegistroScreen = () => {
+const RegistroScreen = ({navigation}) => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [username, setUsername] = useState('');
@@ -68,8 +68,8 @@ const RegistroScreen = () => {
         peso,
         obra_social: obraSocial
       });
-
       Alert.alert('Éxito', response.data.message);
+      navigation.navigate('Login')
     } catch (error) {
       Alert.alert('Error', error.response ? error.response.data.error : 'Hubo un problema al crear el usuario.');
     }
@@ -172,7 +172,7 @@ const RegistroScreen = () => {
       />
       <Button title="Crear Usuario" onPress={handleSubmit} />
        <Text style={styles.texto}> 
-        Ya tenés cuenta? <Text style={styles.link} onPress={() => navigation.navigate('Profile')}>Inicia sesión</Text>
+        Ya tenés cuenta? <Text style={styles.link} onPress={() => navigation.navigate('Login')}>Inicia sesión</Text>
       </Text>
       {/* Parte coninua con Google */}
       <Text style={styles.texto}> 
