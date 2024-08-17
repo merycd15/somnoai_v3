@@ -85,7 +85,7 @@ const LoginScreen = ({navigation}) => {
         <Text style={styles.title}>SomnoAI</Text>
       </View>
       <View>
-        <Text style={styles.subtitle}>Registrate</Text>
+        <Text style={styles.subtitle}>Login</Text>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TextInput
@@ -114,6 +114,10 @@ const LoginScreen = ({navigation}) => {
       
       <Text style={styles.texto} onPress={() => navigation.navigate('RecoverPassword')}> 
         ¿Olvidaste tu contraseña?
+      </Text>
+
+      <Text style={styles.texto} onPress={() => navigation.navigate('Register')}> 
+        ¿Deseas registrarte?
       </Text>
 
       {/* <Button title="Enviar" onPress={validateInput} /> */}
