@@ -3,12 +3,12 @@ import {SafeAreaView, StyleSheet, TextInput, View, Image, Text, TouchableOpacity
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const LoginScreen = ({navigation}) => {
+const FormScreen = ({navigation}) => {
   const [error, setError] = useState(''); 
   // const [avatarUri, setAvatarUri] = useState('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para controlar la visibilidad de la contraseña
+  const [subject, setSubject] = React.useState('');
+  const [message, setMessage] = React.useState('');
+//   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para controlar la visibilidad de la contraseña
 
   // const [name, setName] = React.useState('');
   // const [surname, setSurname] = React.useState('');
@@ -18,28 +18,28 @@ const LoginScreen = ({navigation}) => {
   // const [height, setHeight] = React.useState('');
   // const [medicalCare, setMedicalCare] = React.useState('');  
 
-  const validateEmail = (email) => {
-    // Expresión regular para validar el formato del correo electrónico
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
+//   const validateEmail = (email) => {
+//     // Expresión regular para validar el formato del correo electrónico
+//     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     return emailPattern.test(email);
+//   };
 
-  const validateInput = () => {
-    setError('');
-    if (!validateEmail(email)) {
-      setError('El correo electrónico no es válido.');
-      return;
-    }
-    // if (!password || !name || !surname || !telephone || !age || !weight || !height || !medicalCare) {
-    //   setError('Todos los campos deben estar llenos.');
-    //   return;
-    // }
-    console.log('Datos válidos:', { email, password });
-  };
+//   const validateInput = () => {
+//     setError('');
+//     if (!validateEmail(email)) {
+//       setError('El correo electrónico no es válido.');
+//       return;
+//     }
+//     // if (!password || !name || !surname || !telephone || !age || !weight || !height || !medicalCare) {
+//     //   setError('Todos los campos deben estar llenos.');
+//     //   return;
+//     // }
+//     console.log('Datos válidos:', { subject, message });
+//   };
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible); // Alterna la visibilidad de la contraseña
-  };
+//   const togglePasswordVisibility = () => {
+//     setIsPasswordVisible(!isPasswordVisible); // Alterna la visibilidad de la contraseña
+//   };
 
     // // useEffect para cargar los datos al montar el componente
     // useEffect(() => {
@@ -81,57 +81,49 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <SafeAreaView>
-      <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => acción para volver atrás}> */}
-          {/* <Image source={require('../assets/back-arrow.png')} style={styles.backArrow} /> */}
-        {/* </TouchableOpacity> */}
-        <Image source={require('../assets/contacts.png')} style={styles.icon} />
-        <Text style={styles.title}>Formulario contacto</Text>
-      </View>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <TextInput
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Asunto"
-        keyboardType="email-address"
-      />
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.inputPassword}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Mensaje"
-          secureTextEntry={!isPasswordVisible} // Controla si el texto es seguro (oculto) o no
-        />
-        <TouchableOpacity onPress={togglePasswordVisibility}>
-          <Icon 
-            name={isPasswordVisible ? "visibility" : "visibility-off"} 
-            size={24} 
-            color="grey" 
-          />
-        </TouchableOpacity>
-      </View>
       
-      <Text style={styles.texto} onPress={() => navigation.navigate('RecoverPassword')}> 
+        <View style={styles.header}>
+            {/* <TouchableOpacity onPress={() => acción para volver atrás}> */}
+            {/* <Image source={require('../assets/back-arrow.png')} style={styles.backArrow} /> */}
+            {/* </TouchableOpacity> */}
+            <Image source={require('../assets/contacts.png')} style={styles.icon} />
+            <Text style={styles.title}>Formulario contacto</Text>
+        </View>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        
+        <View>
+            <TextInput
+                style={styles.input}
+                onChangeText={setSubject}
+                value={subject}
+                placeholder="Asunto"
+                keyboardType="email-address"
+            />
+            <View style={styles.messageContainer}>
+            <TextInput
+                style={styles.inputMessage}
+                onChangeText={setMessage}
+                value={message}
+                placeholder="Mensaje"
+                multiline={true}  // Permite múltiples líneas en el campo de texto
+            />
+            </View>
+
+        </View>
+      {/* <Text style={styles.texto} onPress={() => navigation.navigate('RecoverPassword')}> 
         ¿Olvidaste tu contraseña?
-      </Text>
+      </Text> */}
 
       {/* <Button title="Enviar" onPress={validateInput} /> */}
       {/* <TouchableOpacity style={styles.button} onPress={validateInput}> */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonText}>Enviar</Text>
-      </TouchableOpacity>
-      {/* Parte coninua con Google */}
-      <Text style={styles.textoGoogle}> 
-        O continúa con
-      </Text>
-      {/* <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
-        <Image
-          source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg' }}
-          style={styles.googleIcon}
-        />
-      </TouchableOpacity> */}
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.buttonEnviar} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextEnviar}>Enviar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonCancelar} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCancelar}>Cancelar</Text>
+        </TouchableOpacity>
+        </View>
     </SafeAreaView>
   );
 };
@@ -174,7 +166,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   input: {
-    height: 40,
+    height: '10%',
     margin: 12,
     borderWidth: 1,
     padding: 10,
@@ -184,19 +176,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15, // Espacio interno a los lados
     fontSize: 16,
   },
-  passwordContainer: {
+  messageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 12,
+    // marginBottom: 0, // Aumenta la separación entre el campo de mensaje y los botones
     borderWidth: 2,
     borderColor: '#ccc',
     borderRadius: 15,
     paddingHorizontal: 10,
+    height:'60%',
   },
-  inputPassword: {
+  inputMessage: {
     flex: 1,
-    height: 40,
+    // height: 100,  // Aumenta la altura del campo de mensaje
     fontSize: 16,
+    textAlignVertical: 'top',  // Alinea el texto en la parte superior
   },
   editIcon: {
     position: 'absolute',
@@ -209,16 +204,32 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
   },
-  button: {
-    width: '95%', // Ancho específico del botón
-    height: 50, // Altura del botón
-    borderRadius: 25, // Radio de los bordes
-    backgroundColor: '#007BFF', // Color de fondo del botón
-    alignItems: 'center', // Centra el texto en el botón
-    justifyContent: 'center', // Centra el contenido verticalmente
-    marginHorizontal: 'auto',
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: '15%',
   },
-  buttonText: {
+  buttonEnviar: {
+    width: '40%', // Ajusta el ancho según tus necesidades
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#007BFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonCancelar: {
+    width: '40%', // Ajusta el ancho según tus necesidades
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#828282',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonTextEnviar: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  buttonTextCancelar: {
     color: '#fff',
     fontSize: 16,
   },
@@ -236,4 +247,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LoginScreen;
+export default FormScreen;
