@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -6,42 +6,25 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [avatarUri, setAvatarUri] = useState('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x');
 
-  const handleImagePicker = () => {
-    const options = {
-      mediaType: 'photo',
-      quality: 1,
-    };
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('El usuario canceló la selección de imagen');
-      } else if (response.errorMessage) {
-        console.log('Error:', response.errorMessage);
-      } else {
-        const uri = response.assets[0].uri;
-        setAvatarUri(uri);  // Actualiza el estado con la nueva imagen
-      }
-    });
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={require('../assets/back-arrow.png')} style={styles.backArrow} />
-        </TouchableOpacity> */}
-        <Text style={styles.greeting}>Hola, Juan!</Text>
-        <Text style={styles.subGreeting}>¿Cómo estás el día de hoy?</Text>
-        {/* <Image source={require('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x')} style={styles.avatar} /> */}
+        <View>
+          <Text style={styles.greeting}>Hola, Juan!</Text>
+          <Text style={styles.subGreeting}>¿Cómo estás el día de hoy?</Text>
+        </View>
         <Image source={{ uri: avatarUri }} style={styles.avatar} />
       </View>
 
       <TouchableOpacity style={styles.infoBox} onPress={() => navigation.navigate('InfoScreen')}>
-        <Image source={require('../assets/info-icon.png')} style={styles.infoIcon} />
+        {/* Acá no iría a una pantalla, si no que tomaría los datos de algún lado o esa era la idea, de última se agrega una pantalla pero hay que agregarla al docu */}
+        <Image source={require('../assets/info.png')} style={styles.infoIcon} />
         <Text style={styles.infoText}>APNEA QUE ES + INFO</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.sleepScoreBox} onPress={() => navigation.navigate('SleepScoreScreen')}>
-        <Image source={require('../assets/sleep-icon.png')} style={styles.sleepIcon} />
+      <TouchableOpacity style={styles.sleepScoreBox} onPress={() => navigation.navigate('StatisticsScreen')}>
+        {/* Acá no iría a una pantalla, si no que tomaría los datos del smartwatch o esa era la idea, de última se agrega una pantalla pero hay que agregarla al docu */}
+        <Image source={require('../assets/sleepScore.png')} style={styles.sleepIcon} />
         <Text style={styles.sleepScoreText}>PUNTUACION SUEÑO</Text>
       </TouchableOpacity>
 
@@ -49,15 +32,15 @@ const HomeScreen = () => {
         <Text style={styles.mySpaceTitle}>Mi espacio</Text>
         <View style={styles.mySpaceOptions}>
           <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('ContactsScreen')}>
-            <Image source={require('../assets/contacts-icon.png')} style={styles.mySpaceIcon} />
+            <Image source={require('../assets/contacts.png')} style={styles.mySpaceIcon} />
             <Text style={styles.mySpaceText}>Mis contactos</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('CentersScreen')}>
-            <Image source={require('../assets/centers-icon.png')} style={styles.mySpaceIcon} />
+            <Image source={require('../assets/centers.png')} style={styles.mySpaceIcon} />
             <Text style={styles.mySpaceText}>Centros</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('MyDreamScreen')}>
-            <Image source={require('../assets/dream-icon.png')} style={styles.mySpaceIcon} />
+            <Image source={require('../assets/myDream.png')} style={styles.mySpaceIcon} />
             <Text style={styles.mySpaceText}>Mi sueño</Text>
           </TouchableOpacity>
         </View>
@@ -77,62 +60,74 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  backArrow: {
-    width: 24,
-    height: 24,
-  },
   greeting: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#007AFF',
   },
   subGreeting: {
     fontSize: 16,
     color: '#8E8E93',
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   infoBox: {
-    marginTop: 30,
+    marginTop: 20,
     padding: 20,
-    backgroundColor: '#F0F4FF',
-    borderRadius: 10,
-    alignItems: 'center',
+    backgroundColor: '#E0EFFF',
+    borderRadius: 20,
+    alignItems: 'flex-start', // Alinea el contenido a la izquierda
+    width: '100%', // Ancho deseado
+    height: '45%', // Altura deseada
+    position: 'relative', // Permite usar posicionamiento absoluto dentro del contenedor
   },
   infoIcon: {
-    width: 60,
-    height: 60,
+    width: 100,
+    height: 100,
     marginBottom: 10,
+    position: 'absolute', // Posicionamiento absoluto dentro del contenedor
+    top: 20, // Ajusta la posición desde la parte superior del recuadro
+    left: 20, // Ajusta la posición desde la parte izquierda del recuadro
   },
   infoText: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
+    color: '#007AFF',
+    marginTop: '50%', // Añade un margen superior para que el texto no se superponga con la imagen
+    alignSelf:'center',
   },
   sleepScoreBox: {
     marginTop: 20,
     padding: 20,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 10,
-    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    flexDirection: 'row', // Alinea los elementos en fila
+    alignItems: 'center', // Centra verticalmente los elementos dentro del contenedor
+    width: '100%', // Ancho deseado
+    height: '20%', // Altura deseada
   },
   sleepIcon: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
+    width: 100,
+    height: 100,
+    marginRight: 10, // Espacio entre la imagen y el texto
   },
   sleepScoreText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#4A4A4A',
+    alignSelf: 'flex-start', // Alinea el texto a la parte superior del contenedor
   },
   mySpaceContainer: {
-    marginTop: 40,
+    marginTop: 30,
   },
   mySpaceTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#4A4A4A',
   },
   mySpaceOptions: {
     flexDirection: 'row',
@@ -149,6 +144,7 @@ const styles = StyleSheet.create({
   mySpaceText: {
     fontSize: 14,
     textAlign: 'center',
+    color: '#4A4A4A',
   },
 });
 

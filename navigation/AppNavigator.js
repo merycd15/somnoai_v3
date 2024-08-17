@@ -6,6 +6,11 @@ import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RecoverPassScreen from '../screens/RecoverPassScreen';
 import HomeScreen from '../screens/HomeScreen';
+import MyDreamScreen from '../screens/MyDreamScreen';
+import CentersScreen from '../screens/CentersScreen';
+import ContactsScreen from '../screens/ContactsScreen';
+import StatisticsScreen from '../screens/StatisticsScreen';
+import FormScreen from '../screens/FormScreen';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +55,41 @@ const AppNavigator = () => {
         <Stack.Screen name="Register" component={RegisterScreen} 
           options={{ 
             title: 'Register',
+            headerBackTitle: 'Back', // Título de la flecha de regreso
+            headerBackVisible: false // Asegura que la flecha sea visible
+          }}
+        />
+        <Stack.Screen name="MyDreamScreen" component={MyDreamScreen} 
+          options={{ 
+            title: 'MyDreamScreen',
+            headerBackTitle: 'Back', // Título de la flecha de regreso
+            headerBackVisible: false // Asegura que la flecha sea visible
+          }}
+        />
+        <Stack.Screen name="CentersScreen" component={CentersScreen} 
+          options={{ 
+            title: 'CentersScreen',
+            headerBackTitle: 'Back', // Título de la flecha de regreso
+            headerBackVisible: false // Asegura que la flecha sea visible
+          }}
+        />
+        <Stack.Screen name="ContactsScreen" component={ContactsScreen} 
+          options={{ 
+            title: 'ContactsScreen',
+            headerBackTitle: 'Back', // Título de la flecha de regreso
+            headerBackVisible: false // Asegura que la flecha sea visible
+          }}
+        />
+        <Stack.Screen name="StatisticsScreen" component={StatisticsScreen} 
+          options={{ 
+            title: 'StatisticsScreen',
+            headerBackTitle: 'Back', // Título de la flecha de regreso
+            headerBackVisible: false // Asegura que la flecha sea visible
+          }}
+        />
+        <Stack.Screen name="FormScreen" component={FormScreen} 
+          options={{ 
+            title: 'FormScreen',
             headerBackTitle: 'Back', // Título de la flecha de regreso
             headerBackVisible: false // Asegura que la flecha sea visible
           }}
