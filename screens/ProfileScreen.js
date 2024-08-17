@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import {SafeAreaView, StyleSheet, TextInput, View, Image, Text, TouchableOpacity, Button } from 'react-native';
+import { SafeAreaView, StyleSheet, TextInput, View, Image, Text, TouchableOpacity } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ProfileScreen = () => {
   const [error, setError] = useState(''); 
   const [avatarUri, setAvatarUri] = useState('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [surname, setSurname] = React.useState('');
-  const [telephone, setTelephone] = React.useState('');
-  const [age, setAge] = React.useState('');
-  const [weight, setWeight] = React.useState('');
-  const [height, setHeight] = React.useState('');
-  const [medicalCare, setMedicalCare] = React.useState('');  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [telephone, setTelephone] = useState('');
+  const [age, setAge] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [medicalCare, setMedicalCare] = useState('');  
+  const [isEditing, setIsEditing] = useState(false); // Estado para controlar la edición
 
   const validateEmail = (email) => {
-    // Expresión regular para validar el formato del correo electrónico
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
@@ -35,54 +35,39 @@ const ProfileScreen = () => {
     console.log('Datos válidos:', { email, password, name, surname, telephone, age, weight, height, medicalCare });
   };
 
-    // // useEffect para cargar los datos al montar el componente
-    // useEffect(() => {
-    //   // Simulando una llamada a una API
-    //   fetch('https://miapi.com/perfil')  // URL de tu API
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       setEmail(data.email);
-    //       setPassword(data.password); // Evita hacer esto en producción
-    //       setName(data.name);
-    //       setSurname(data.surname);
-    //       setTelephone(data.telephone);
-    //       setAge(data.age);
-    //       setWeight(data.weight);
-    //       setHeight(data.height);
-    //       setMedicalCare(data.medicalCare);
-    //       setAvatarUri(data.avatarUri); // Supongamos que la API también devuelve la URL de la imagen
-    //     })
-    //     .catch(error => {
-    //       console.error('Error al obtener los datos del perfil:', error);
-    //     });
-    // }, []);
-    const handleImagePicker = () => {
-      const options = {
-        mediaType: 'photo',
-        quality: 1,
-      };
-      launchImageLibrary(options, response => {
-        if (response.didCancel) {
-          console.log('El usuario canceló la selección de imagen');
-        } else if (response.errorMessage) {
-          console.log('Error:', response.errorMessage);
-        } else {
-          const uri = response.assets[0].uri;
-          setAvatarUri(uri);  // Actualiza el estado con la nueva imagen
-        }
-      });
+  const handleImagePicker = () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
     };
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('El usuario canceló la selección de imagen');
+      } else if (response.errorMessage) {
+        console.log('Error:', response.errorMessage);
+      } else {
+        const uri = response.assets[0].uri;
+        setAvatarUri(uri);
+      }
+    });
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing); // Cambia el estado de edición
+  };
 
   return (
     <SafeAreaView>
       <View style={styles.header}>
-        <View onPress={handleImagePicker}>
-          <Image source={{ uri: avatarUri }} style={styles.avatar} />
-          <TouchableOpacity  style={styles.editIcon}>
-            <Icon name="edit" size={14} color="#fff" />
+        <View>
+          <TouchableOpacity onPress={handleImagePicker}>
+            <Image source={{ uri: avatarUri }} style={styles.avatar} />
+            <TouchableOpacity style={styles.editIcon} onPress={handleEditToggle}>
+              <Icon name="edit" size={14} color="#fff" />
+            </TouchableOpacity>
           </TouchableOpacity>
         </View>
-        <Text style={styles.name}>{name} {surname}Lucas Scott</Text>
+        <Text style={styles.name}>{name} {surname}</Text>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <TextInput
@@ -91,6 +76,7 @@ const ProfileScreen = () => {
         value={email}
         placeholder="Correo electrónico"
         keyboardType="email-address"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -99,6 +85,7 @@ const ProfileScreen = () => {
         placeholder="Contraseña"
         keyboardType="default"
         secureTextEntry={true}
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -106,6 +93,7 @@ const ProfileScreen = () => {
         value={name}
         placeholder="Nombre"
         keyboardType="default"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -113,6 +101,7 @@ const ProfileScreen = () => {
         value={surname}
         placeholder="Apellido"
         keyboardType="default"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -120,6 +109,7 @@ const ProfileScreen = () => {
         value={telephone}
         placeholder="Teléfono"
         keyboardType="phone-pad"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -127,6 +117,7 @@ const ProfileScreen = () => {
         value={age}
         placeholder="Edad"
         keyboardType="numeric"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -134,6 +125,7 @@ const ProfileScreen = () => {
         value={weight}
         placeholder="Peso"
         keyboardType="decimal-pad"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -141,6 +133,7 @@ const ProfileScreen = () => {
         value={height}
         placeholder="Altura"
         keyboardType="decimal-pad"
+        editable={isEditing} // Controla si es editable
       />
       <TextInput
         style={styles.input}
@@ -148,8 +141,8 @@ const ProfileScreen = () => {
         value={medicalCare}
         placeholder="Obra social"
         keyboardType="default"
+        editable={isEditing} // Controla si es editable
       />
-      {/* <Button title="Enviar" onPress={validateInput} /> */}
       <TouchableOpacity style={styles.button} onPress={validateInput}>
         <Text style={styles.buttonText}>Enviar</Text>
       </TouchableOpacity>
@@ -198,12 +191,12 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   button: {
-    width: '95%', // Ancho específico del botón
-    height: 50, // Altura del botón
-    borderRadius: 25, // Radio de los bordes
-    backgroundColor: '#007BFF', // Color de fondo del botón
-    alignItems: 'center', // Centra el texto en el botón
-    justifyContent: 'center', // Centra el contenido verticalmente
+    width: '95%',
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#007BFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginHorizontal: 'auto',
   },
   buttonText: {
