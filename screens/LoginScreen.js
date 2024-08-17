@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
     }
   
     try {
-      const response = await axios.post('http://127.0.0.1:8000/SomnoAI/Login/', {
+      const response = await axios.post('https://somnoai.onrender.com/SomnoAI/Login/', {
         username,
         password
       });

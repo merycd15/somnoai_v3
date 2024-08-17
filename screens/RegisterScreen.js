@@ -56,7 +56,7 @@ const RegistroScreen = ({navigation}) => {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/SomnoAI/crearUsuario/', {
+      const response = await axios.post('https://somnoai.onrender.com/SomnoAI/crearUsuario/', {
         nombre,
         apellido,
         username,
