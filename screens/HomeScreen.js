@@ -21,7 +21,7 @@ const HomeScreen = () => {
       <TouchableOpacity style={styles.infoBox} onPress={() => navigation.navigate('InfoScreen')}>
         {/* Acá no iría a una pantalla, si no que tomaría los datos de algún lado o esa era la idea, de última se agrega una pantalla pero hay que agregarla al docu */}
         <Image source={require('../assets/info.png')} style={styles.infoIcon} />
-        <Text style={styles.infoText}>APNEA QUE ES + INFO</Text>
+        <Text style={styles.infoText}>La apnea del sueño es un trastorno en el que la respiración se detiene brevemente durante el sueño debido a la obstrucción de las vías respiratorias, lo que interrumpe el sueño y puede causar problemas de salud.</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.sleepScoreBox} onPress={() => navigation.navigate('StatisticsScreen')}>
@@ -96,9 +96,9 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 25,
-    fontWeight: 'bold',
+    fontWeight: 'medium',
     color: '#007AFF',
-    marginTop: '50%', // Añade un margen superior para que el texto no se superponga con la imagen
+    marginTop: '30%', // Añade un margen superior para que el texto no se superponga con la imagen
     alignSelf:'center',
   },
   sleepScoreBox: {
