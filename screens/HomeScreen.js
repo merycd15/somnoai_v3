@@ -13,7 +13,9 @@ const HomeScreen = () => {
           <Text style={styles.greeting}>Hola, Juan!</Text>
           <Text style={styles.subGreeting}>¿Cómo estás el día de hoy?</Text>
         </View>
-        <Image source={{ uri: avatarUri }} style={styles.avatar} />
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Image source={{ uri: avatarUri }} style={styles.avatar} />
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.infoBox} onPress={() => navigation.navigate('InfoScreen')}>
