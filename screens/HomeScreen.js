@@ -91,7 +91,7 @@ const HomeScreen = () => {
             <Image source={require('../assets/centers.png')} style={styles.mySpaceIcon} />
             <Text style={styles.mySpaceText}>Centros</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('MyDreamScreen')}>
+          <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('MyDreamScreen', { data: relojData })}>
             <Image source={require('../assets/myDream.png')} style={styles.mySpaceIcon} />
             <Text style={styles.mySpaceText}>Mi sueño</Text>
           </TouchableOpacity>

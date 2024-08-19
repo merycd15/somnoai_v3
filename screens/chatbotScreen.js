@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 const ChatbotScreen = ({ route }) => {
-  const { data: sleepData } = route.params; // Recibe los datos del reloj
+  const { data: sleepData } = route.params; 
   const [messages, setMessages] = useState([
     { text: '¡Hola! ¿Cómo puedo ayudarte hoy?', from: 'bot' }
   ]);

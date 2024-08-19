@@ -1,22 +1,33 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 
-const MyDreamScreen = () => {
+const MyDreamScreen = ({ route }) => {
+  // Recibe los datos del reloj
+  const { data: sleepData } = route.params || {};
+
+  // Verifica que sleepData tenga los datos esperados
+  const apneaPercentage = sleepData?.apneaPercentage || 'No disponible';
+  const sleepScore = sleepData?.sleepScore || 'No disponible';
+
+  // Proporciona un valor predeterminado para stats si no existe
+  const stats = sleepData?.stats || [];
+
+  // Debugging: Verifica el contenido de sleepData y stats
+  console.log('sleepData:', sleepData);
+  console.log('stats:', stats);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => acción para volver atrás}> */}
-          {/* <Image source={require('../assets/back-arrow.png')} style={styles.backArrow} /> */}
-        {/* </TouchableOpacity> */}
         <Image source={require('../assets/myDream.png')} style={styles.icon} />
         <Text style={styles.title}>Mi Sueño</Text>
       </View>
+
       <View style={styles.infoBox}>
         <Image source={require('../assets/info.png')} style={styles.infoIcon} />
         <View style={styles.infoContent}>
           <Text style={styles.infoTitle}>PORCENTAJE DE APNEA</Text>
-          {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>80%</Text>
+          <Text style={styles.infoValue}>{apneaPercentage}%</Text>
         </View>
       </View>
 
@@ -24,21 +35,16 @@ const MyDreamScreen = () => {
         <Image source={require('../assets/sleepScore.png')} style={styles.infoIcon} />
         <View style={styles.infoContent}>
           <Text style={styles.infoTitle}>PUNTUACION SUEÑO</Text>
-          {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>90</Text>
+          <Text style={styles.infoValue}>{sleepScore}</Text>
         </View>
       </View>
 
       <View style={styles.statsBox}>
         <Text style={styles.statsTitle}>ESTADISTICAS</Text>
-        {/* Aquí iría el gráfico o las barras que representen las estadísticas, hay que modificarlo según datos*/}
         <View style={styles.statsGraph}>
-          <View style={[styles.bar, { height: 50 }]} />
-          <View style={[styles.bar, { height: 40 }]} />
-          <View style={[styles.bar, { height: 60 }]} />
-          <View style={[styles.bar, { height: 30 }]} />
-          <View style={[styles.bar, { height: 70 }]} />
-          <View style={[styles.bar, { height: 40 }]} />
+          {stats.map((stat, index) => (
+            <View key={index} style={[styles.bar, { height: stat.height || 50 }]} />
+          ))}
         </View>
       </View>
     </View>
@@ -52,26 +58,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
-    flexDirection: 'row',          // Para organizar en fila
-    alignItems: 'center',          // Centra verticalmente los elementos
-    justifyContent: 'space-between', // Distribuye los elementos entre los extremos izquierdo y derecho
-    paddingHorizontal: 20,         // Añade relleno a los lados
-    marginTop: 20,                 // Añade un margen superio
-  },
-  backArrow: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#4A4A4A',
-    marginRight: '10%',                 // Mueve "Mi Sueño" más cerca de la imagen
+    marginRight: '10%',
   },
   icon: {
-    width: 100,                      // Ajusta el tamaño de la imagen
-    height: 100,                     // Ajusta el tamaño de la imagen
+    width: 100,
+    height: 100,
     alignSelf: 'center',
     marginVertical: 20,
   },
@@ -82,8 +83,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     alignItems: 'center',
-    width: '100%', // Ancho deseado
-    height: '18%', // Altura deseada
+    width: '100%',
+    height: '18%',
   },
   infoIcon: {
     width: 80,
@@ -110,8 +111,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 10,
     alignItems: 'center',
-    width: '100%', // Ancho deseado
-    height: '18%', // Altura deseada
+    width: '100%',
+    height: '18%',
   },
   statsTitle: {
     fontSize: 16,
