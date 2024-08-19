@@ -1,24 +1,41 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
-const ChatbotScreen = () => {
+const ChatbotScreen = ({ route }) => {
+  const { data: sleepData } = route.params; // Recibe los datos del reloj
   const [messages, setMessages] = useState([
     { text: '¡Hola! ¿Cómo puedo ayudarte hoy?', from: 'bot' }
   ]);
   const [input, setInput] = useState('');
-
+  
   const handleSend = () => {
     if (input.trim() === '') return;
 
     // Agrega el mensaje del usuario
     setMessages([...messages, { text: input, from: 'user' }]);
 
-    // Simula una respuesta del chatbot
+    // Genera la respuesta del chatbot
+    const response = generateResponse(input);
+    
     setTimeout(() => {
-      setMessages([...messages, { text: input, from: 'user' }, { text: 'Esta es una respuesta automática.', from: 'bot' }]);
+      setMessages([...messages, { text: input, from: 'user' }, { text: response, from: 'bot' }]);
     }, 1000);
 
     setInput('');
+  };
+
+  const generateResponse = (input) => {
+    input = input.toLowerCase();
+    
+    if (input.includes('cómo dormí') || input.includes('mi sueño')) {
+      return `Tu puntuación de sueño fue de ${sleepData.sleepScore}, con un ${sleepData.apneaPercentage}% de apnea. Dormiste un total de ${sleepData.totalSleep} horas, de las cuales ${sleepData.deepSleep} horas fueron de sueño profundo.`;
+    } else if (input.includes('qué es la apnea')) {
+      return 'La apnea del sueño es un trastorno en el que la respiración se detiene brevemente durante el sueño debido a la obstrucción de las vías respiratorias.';
+    } else if (input.includes('recomendaciones') || input.includes('mejorar mi sueño')) {
+      return 'Aquí tienes algunas recomendaciones: 1) Mantén un horario de sueño regular. 2) Evita la cafeína y el alcohol antes de dormir. 3) Crea un ambiente propicio para el sueño.';
+    } else {
+      return 'Lo siento, no tengo una respuesta para eso. ¿Puedes preguntar de otra forma o sobre otro tema?';
+    }
   };
 
   return (
@@ -45,6 +62,7 @@ const ChatbotScreen = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -65,14 +83,14 @@ const styles = StyleSheet.create({
   },
   botMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E0EFFF',
+    backgroundColor: '#333333',  // Color más oscuro
     padding: 10,
     borderRadius: 10,
     marginBottom: 10,
     maxWidth: '80%',
   },
   messageText: {
-    color: '#FFFFFF',
+    color: '#FFFFFF', // Texto en blanco para que sea legible sobre el fondo oscuro
   },
   inputContainer: {
     flexDirection: 'row',

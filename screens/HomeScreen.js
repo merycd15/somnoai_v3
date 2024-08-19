@@ -9,6 +9,20 @@ const HomeScreen = () => {
   const sleepScore = 85; // Simulación de datos
   const apneaPercentage = 15; // Simulación de datos
 
+  // Simulación de datos del reloj
+  const relojData = {
+    heartRate: 72,
+    oxygenSaturation: 98,
+    sleepStages: {
+      light: '3h 20m',
+      deep: '1h 40m',
+      rem: '1h 30m',
+    },
+    apneaEvents: 10,
+    sleepScore: 85,
+    apneaPercentage: 15,
+  };
+
   useEffect(() => {
     const currentHour = new Date().getHours();
     if (currentHour >= 6 && currentHour < 18) {
@@ -50,7 +64,7 @@ const HomeScreen = () => {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.chatBotBox} onPress={() => navigation.navigate('chatbotScreen')}>
+      <TouchableOpacity style={styles.chatBotBox} onPress={() => navigation.navigate('chatbotScreen', { data: relojData })}>
         <Image source={require('../assets/chatbot.jpg')} style={styles.chatBotIcon} />
         <Text style={styles.chatBotText}>Habla con nuestro chatbot</Text>
       </TouchableOpacity>
