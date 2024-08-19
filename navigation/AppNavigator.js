@@ -11,6 +11,7 @@ import CentersScreen from '../screens/CentersScreen';
 import ContactsScreen from '../screens/ContactsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import FormScreen from '../screens/FormScreen';
+import ChatbotScreen from '../screens/chatbotScreen';
 
 const Stack = createStackNavigator();
 
@@ -90,6 +91,13 @@ const AppNavigator = () => {
         <Stack.Screen name="FormScreen" component={FormScreen} 
           options={{ 
             title: 'FormScreen',
+            headerBackTitle: 'Back', // Título de la flecha de regreso
+            headerBackVisible: false // Asegura que la flecha sea visible
+          }}
+        />
+        <Stack.Screen name="chatbotScreen" component={ChatbotScreen} 
+          options={{ 
+            title: 'chatbotScreen',
             headerBackTitle: 'Back', // Título de la flecha de regreso
             headerBackVisible: false // Asegura que la flecha sea visible
           }}

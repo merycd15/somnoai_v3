@@ -1,34 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
+  const [greeting, setGreeting] = useState('¡Buen día!');
+  const [isDaytime, setIsDaytime] = useState(true); 
   const navigation = useNavigation();
-  const [avatarUri, setAvatarUri] = useState('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x');
+  const sleepScore = 85; // Simulación de datos
+  const apneaPercentage = 15; // Simulación de datos
+
+  useEffect(() => {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 6 && currentHour < 18) {
+      setGreeting('¡Buen día!');
+      setIsDaytime(true);
+    } else if (currentHour >= 18 && currentHour < 20) {
+      setGreeting('¡Buenas tardes!');
+      setIsDaytime(false);
+    } else {
+      setGreeting('¡Buenas noches!');
+      setIsDaytime(false);
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hola, Juan!</Text>
-          <Text style={styles.subGreeting}>¿Cómo estás el día de hoy?</Text>
+          <Text style={styles.greeting}>{greeting} Juan</Text>
+          <Text style={styles.subGreeting}>¿Cómo dormiste hoy?</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Image source={{ uri: avatarUri }} style={styles.avatar} />
+          <Image source={{ uri: 'https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x' }} style={styles.avatar} />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.infoBox} onPress={() => navigation.navigate('InfoScreen')}>
-        {/* Acá no iría a una pantalla, si no que tomaría los datos de algún lado o esa era la idea, de última se agrega una pantalla pero hay que agregarla al docu */}
-        <Image source={require('../assets/info.png')} style={styles.infoIcon} />
-        <Text style={styles.infoText}>La apnea del sueño es un trastorno en el que la respiración se detiene brevemente durante el sueño debido a la obstrucción de las vías respiratorias, lo que interrumpe el sueño y puede causar problemas de salud.</Text>
+      <View style={styles.timeOfDayBox}>
+        <Image
+          source={isDaytime ? require('../assets/sun.png') : require('../assets/moon.jpg')}
+          style={styles.timeOfDayIcon}
+        />
+        <Text style={styles.timeOfDayText}>{isDaytime ? 'Es de día' : 'Es de noche'}</Text>
+      </View>
+
+      <TouchableOpacity style={styles.infoBox}>
+        <Text style={styles.infoTitle}>¿Sabías que?</Text>
+        <Text style={styles.infoText}>
+          La apnea del sueño es un trastorno en el que la respiración se detiene brevemente durante el sueño debido a la obstrucción de las vías respiratorias, lo que interrumpe el sueño y puede causar problemas de salud.
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.sleepScoreBox} onPress={() => navigation.navigate('StatisticsScreen')}>
-        {/* Acá no iría a una pantalla, si no que tomaría los datos del smartwatch o esa era la idea, de última se agrega una pantalla pero hay que agregarla al docu */}
-        <Image source={require('../assets/sleepScore.png')} style={styles.sleepIcon} />
-        <Text style={styles.sleepScoreText}>PUNTUACION SUEÑO</Text>
+      <TouchableOpacity style={styles.chatBotBox} onPress={() => navigation.navigate('chatbotScreen')}>
+        <Image source={require('../assets/chatbot.jpg')} style={styles.chatBotIcon} />
+        <Text style={styles.chatBotText}>Habla con nuestro chatbot</Text>
       </TouchableOpacity>
+
+      <View style={styles.sleepStatsBox}>
+        <View style={styles.statItem}>
+          <Text style={styles.statTitle}>Puntuación de Sueño</Text>
+          <Text style={styles.statValue}>{sleepScore}</Text>
+        </View>
+        <View style={styles.statItem}>
+          <Text style={styles.statTitle}>% de Apnea del Sueño</Text>
+          <Text style={styles.statValue}>{apneaPercentage}%</Text>
+        </View>
+      </View>
 
       <View style={styles.mySpaceContainer}>
         <Text style={styles.mySpaceTitle}>Mi espacio</Text>
@@ -76,51 +112,78 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
   },
+  timeOfDayBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 15,
+  },
+  timeOfDayIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  timeOfDayText: {
+    fontSize: 18,
+    color: '#4A4A4A',
+  },
   infoBox: {
     marginTop: 20,
     padding: 20,
     backgroundColor: '#E0EFFF',
-    borderRadius: 20,
-    alignItems: 'flex-start', // Alinea el contenido a la izquierda
-    width: '100%', // Ancho deseado
-    height: '45%', // Altura deseada
-    position: 'relative', // Permite usar posicionamiento absoluto dentro del contenedor
+    borderRadius: 15,
   },
-  infoIcon: {
-    width: 100,
-    height: 100,
+  infoTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#007AFF',
     marginBottom: 10,
-    position: 'absolute', // Posicionamiento absoluto dentro del contenedor
-    top: 20, // Ajusta la posición desde la parte superior del recuadro
-    left: 20, // Ajusta la posición desde la parte izquierda del recuadro
   },
   infoText: {
-    fontSize: 25,
-    fontWeight: 'medium',
-    color: '#007AFF',
-    marginTop: '30%', // Añade un margen superior para que el texto no se superponga con la imagen
-    alignSelf:'center',
+    fontSize: 16,
+    color: '#4A4A4A',
   },
-  sleepScoreBox: {
+  chatBotBox: {
     marginTop: 20,
+    padding: 15,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chatBotIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+  },
+  chatBotText: {
+    fontSize: 18,
+    color: '#007AFF',
+  },
+  sleepStatsBox: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  statItem: {
+    width: '48%',
     padding: 20,
     backgroundColor: '#F5F5F5',
-    borderRadius: 20,
-    flexDirection: 'row', // Alinea los elementos en fila
-    alignItems: 'center', // Centra verticalmente los elementos dentro del contenedor
-    width: '100%', // Ancho deseado
-    height: '20%', // Altura deseada
+    borderRadius: 15,
+    alignItems: 'center',
   },
-  sleepIcon: {
-    width: 100,
-    height: 100,
-    marginRight: 10, // Espacio entre la imagen y el texto
-  },
-  sleepScoreText: {
-    fontSize: 18,
+  statTitle: {
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#4A4A4A',
-    alignSelf: 'flex-start', // Alinea el texto a la parte superior del contenedor
+    marginBottom: 10,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#007AFF',
   },
   mySpaceContainer: {
     marginTop: 30,
