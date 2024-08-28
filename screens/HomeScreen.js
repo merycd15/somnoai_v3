@@ -70,14 +70,14 @@ const HomeScreen = () => {
       </TouchableOpacity>
 
       <View style={styles.sleepStatsBox}>
-        <View style={styles.statItem}>
+        <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate('StatisticsScreen')}>
           <Text style={styles.statTitle}>Puntuación de Sueño</Text>
           <Text style={styles.statValue}>{sleepScore}</Text>
-        </View>
-        <View style={styles.statItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.statItem} onPress={() => navigation.navigate('StatisticsScreen')}>
           <Text style={styles.statTitle}>% de Apnea del Sueño</Text>
           <Text style={styles.statValue}>{apneaPercentage}%</Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.mySpaceContainer}>
@@ -90,6 +90,10 @@ const HomeScreen = () => {
           <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('CentersScreen')}>
             <Image source={require('../assets/centers.png')} style={styles.mySpaceIcon} />
             <Text style={styles.mySpaceText}>Centros</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('AudioRecorderPlayer', { data: relojData })}>
+            <Image source={require('../assets/myDream.png')} style={styles.mySpaceIcon} />
+            <Text style={styles.mySpaceText}>Grabaciones</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.mySpaceOption} onPress={() => navigation.navigate('MyDreamScreen', { data: relojData })}>
             <Image source={require('../assets/myDream.png')} style={styles.mySpaceIcon} />
