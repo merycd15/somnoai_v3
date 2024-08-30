@@ -1,47 +1,103 @@
 import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
-import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { Audio } from 'expo-av';
 
-const audioRecorderPlayer = new AudioRecorderPlayer();
+export default function App() {
+  const [recording, setRecording] = useState(null);
+  const [recordings, setRecordings] = useState([]);
 
-const SleepRecordingScreen = () => {
-  const [isRecording, setIsRecording] = useState(false);
-
-  const startRecording = async () => {
-    if (!isRecording) {
-      try {
-        const result = await audioRecorderPlayer.startRecorder();
-        setIsRecording(true);
-        console.log('Recording started:', result);
-      } catch (error) {
-        console.error('Error al iniciar la grabación:', error);
+  // Iniciar la grabación
+  async function startRecording() {
+    try {
+      const perm = await Audio.requestPermissionsAsync();
+      if (perm.status === "granted") {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true
+        });
+        const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+        setRecording(recording);
+      } else {
+        console.log("Permisos no concedidos");
       }
-    } else {
-      console.log('Ya está grabando');
+    } catch (err) {
+      console.error("Error al iniciar la grabación", err);
     }
-  };
+  }
 
-  const stopRecording = async () => {
-    if (isRecording) {
-      try {
-        const result = await audioRecorderPlayer.stopRecorder();
-        setIsRecording(false);
-        console.log('Recording stopped:', result);
-      } catch (error) {
-        console.error('Error al detener la grabación:', error);
-      }
-    } else {
-      console.log('La grabación ya se ha detenido');
+  // Detener la grabación
+  async function stopRecording() {
+    setRecording(undefined);
+
+    try {
+      await recording.stopAndUnloadAsync();
+      const { sound, status } = await recording.createNewLoadedSoundAsync();
+      const newRecording = {
+        sound: sound,
+        duration: getDurationFormatted(status.durationMillis),
+        file: recording.getURI()
+      };
+      setRecordings([...recordings, newRecording]);
+    } catch (err) {
+      console.error("Error al detener la grabación", err);
     }
-  };
+  }
+
+  // Formatear la duración
+  function getDurationFormatted(milliseconds) {
+    const minutes = Math.floor(milliseconds / 1000 / 60);
+    const seconds = Math.round((milliseconds / 1000) % 60);
+    return seconds < 10 ? `${minutes}:0${seconds}` : `${minutes}:${seconds}`;
+  }
+
+  // Generar la lista de grabaciones
+  function getRecordingLines() {
+    return recordings.map((recordingLine, index) => {
+      return (
+        <View key={index} style={styles.row}>
+          <Text style={styles.fill}>
+            Recording #{index + 1} | {recordingLine.duration}
+          </Text>
+          <Button onPress={() => recordingLine.sound.replayAsync()} title="Play"></Button>
+        </View>
+      );
+    });
+  }
+
+  // Limpiar las grabaciones
+  function clearRecordings() {
+    setRecordings([]);
+  }
 
   return (
-    <View>
-      <Text>Grabación de sueño activa</Text>
-      <Button title="Iniciar Grabación" onPress={startRecording} />
-      <Button title="Detener Grabación" onPress={stopRecording} />
+    <View style={styles.container}>
+      <Button 
+        title={recording ? 'Stop Recording' : 'Start Recording'} 
+        onPress={recording ? stopRecording : startRecording} 
+      />
+      {getRecordingLines()}
+      {recordings.length > 0 && (
+        <Button title="Clear Recordings" onPress={clearRecordings} />
+      )}
     </View>
   );
-};
+}
 
-export default SleepRecordingScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  fill: {
+    flex: 1,
+    textAlign: 'center',
+  }
+});
