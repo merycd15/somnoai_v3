@@ -13,9 +13,7 @@ import StatisticsScreen from '../screens/StatisticsScreen';
 import FormScreen from '../screens/FormScreen';
 import ChatbotScreen from '../screens/chatbotScreen';
 import AudioRecorderPlayer from '../screens/AudioRecorderPlayer';
-import ResultScreen from '../screens/ResultScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import RecordingHistoryScreen from '../screens/RecordingHistoryScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -113,10 +111,6 @@ const AppNavigator = () => {
             headerBackVisible: false // Asegura que la flecha sea visible
           }}
         />
-        <Stack.Screen name="Result" component={ResultScreen} 
-        />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="RecordingHistory" component={RecordingHistoryScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
