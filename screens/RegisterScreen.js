@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert, Picker } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Alert} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import { ScrollView } from 'react-native';
 
 const RegistroScreen = ({navigation}) => {
   const [nombre, setNombre] = useState('');
@@ -56,7 +58,7 @@ const RegistroScreen = ({navigation}) => {
     }
 
     try {
-      const response = await axios.post('https://somnoai.onrender.com/SomnoAI/crearUsuario/', {
+      const response = await axios.post('https://proyectosomnoai.onrender.com/SomnoAI/crearUsuario/', {
         nombre,
         apellido,
         username,
@@ -77,6 +79,7 @@ const RegistroScreen = ({navigation}) => {
   };
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.label}>Nombre:</Text>
       <TextInput
@@ -186,6 +189,7 @@ const RegistroScreen = ({navigation}) => {
         />
       </TouchableOpacity> */}
     </View>
+    </ScrollView>
   );
 };
 

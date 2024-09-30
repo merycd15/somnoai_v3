@@ -1,41 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import axios from 'axios';
 
 const ChatbotScreen = ({ route }) => {
-  const { data: sleepData } = route.params; 
+  const { data: sleepData } = route.params;
   const [messages, setMessages] = useState([
     { text: '¡Hola! ¿Cómo puedo ayudarte hoy?', from: 'bot' }
   ]);
   const [input, setInput] = useState('');
-  
-  const handleSend = () => {
+
+  // Modifica handleSend para enviar el mensaje al backend con Axios
+  const handleSend = async () => {
     if (input.trim() === '') return;
 
-    // Agrega el mensaje del usuario
+    // Agrega el mensaje del usuario a la pantalla
     setMessages([...messages, { text: input, from: 'user' }]);
 
-    // Genera la respuesta del chatbot
-    const response = generateResponse(input);
-    
-    setTimeout(() => {
-      setMessages([...messages, { text: input, from: 'user' }, { text: response, from: 'bot' }]);
-    }, 1000);
+    try {
+      // Realiza una solicitud POST al backend con Axios
+      const response = await axios.post('https://proyectosomnoai.onrender.com/SomnoAI/geminiChat/', {
+        question: input,
+        parametros: {
+          oxigenacion: sleepData.oxigenacion || 98,
+          ronquidos: sleepData.ronquidos || true,
+        },
+      });
+
+      // Agrega la respuesta del bot a la pantalla
+      setMessages([...messages, { text: input, from: 'user' }, { text: response.data.answer, from: 'bot' }]);
+    } catch (error) {
+      console.error('Error al enviar el mensaje al backend:', error);
+      setMessages([...messages, { text: input, from: 'user' }, { text: 'Hubo un error al procesar tu solicitud.', from: 'bot' }]);
+    }
 
     setInput('');
-  };
-
-  const generateResponse = (input) => {
-    input = input.toLowerCase();
-    
-    if (input.includes('cómo dormí') || input.includes('mi sueño')) {
-      return `Tu puntuación de sueño fue de ${sleepData.sleepScore}, con un ${sleepData.apneaPercentage}% de apnea. Dormiste un total de ${sleepData.totalSleep} horas, de las cuales ${sleepData.deepSleep} horas fueron de sueño profundo.`;
-    } else if (input.includes('qué es la apnea')) {
-      return 'La apnea del sueño es un trastorno en el que la respiración se detiene brevemente durante el sueño debido a la obstrucción de las vías respiratorias.';
-    } else if (input.includes('recomendaciones') || input.includes('mejorar mi sueño')) {
-      return 'Aquí tienes algunas recomendaciones: 1) Mantén un horario de sueño regular. 2) Evita la cafeína y el alcohol antes de dormir. 3) Crea un ambiente propicio para el sueño.';
-    } else {
-      return 'Lo siento, no tengo una respuesta para eso. ¿Puedes preguntar de otra forma o sobre otro tema?';
-    }
   };
 
   return (
@@ -61,7 +59,6 @@ const ChatbotScreen = ({ route }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
