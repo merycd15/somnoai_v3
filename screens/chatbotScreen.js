@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
+import Markdown from 'react-native-markdown-display'; // Importar Markdown
 
 const ChatbotScreen = ({ route }) => {
   const { data: sleepData } = route.params;
@@ -38,10 +39,10 @@ const ChatbotScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.messagesContainer}>
+       <ScrollView contentContainerStyle={styles.messagesContainer}>
         {messages.map((message, index) => (
           <View key={index} style={message.from === 'user' ? styles.userMessage : styles.botMessage}>
-            <Text style={styles.messageText}>{message.text}</Text>
+            <Markdown style={styles.messageText}>{message.text}</Markdown> {/* Usar Markdown */}
           </View>
         ))}
       </ScrollView>
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#007AFF',
+    backgroundColor: '#4A90E2',  // Un tono azul claro
     padding: 10,
     borderRadius: 10,
     marginBottom: 10,
@@ -80,14 +81,15 @@ const styles = StyleSheet.create({
   },
   botMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#333333',  // Color más oscuro
+    backgroundColor: '#3E4A59',  // Un tono azul gris oscuro
     padding: 10,
     borderRadius: 10,
     marginBottom: 10,
     maxWidth: '80%',
   },
   messageText: {
-    color: '#FFFFFF', // Texto en blanco para que sea legible sobre el fondo oscuro
+    color: '#FFFFFF',  // Blanco para que sea legible sobre los fondos oscuros
+    fontSize: 16,      // Ajustar el tamaño de letra para mayor legibilidad
   },
   inputContainer: {
     flexDirection: 'row',
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#4A90E2',  // Azul claro para el botón de enviar
     padding: 10,
     borderRadius: 20,
   },
@@ -110,5 +112,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 
 export default ChatbotScreen;
