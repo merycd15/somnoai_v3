@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Button } from 'react-native';
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
 const StatisticsScreen = () => {
@@ -10,21 +11,28 @@ const StatisticsScreen = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = {
-        heart_rate: 65,
-        spo2: 95,
-        sleep_stages: {
-          light: 150,
-          deep: 60,
-          rem: 90
-        },
-        snore_index: 3,
-        respiratory_rate: 16,
-        sleep_score: 85,
-        movement: 20,
-        total_sleep: 480 // minutos
-      };
-      setSleepData(data);
+      try {
+        const response = await axios.post('https://proyectosomnoai.onrender.com/SomnoAI/predecirApnea/', {
+          parametro: 'valor_cualquiera'  // Puedes pasar cualquier parámetro necesario
+        });
+
+        // Actualizar el estado con la respuesta del backend
+        const backendData = response.data;
+        const data = {
+          resultado_apnea: backendData.resultado_apnea,
+          heart_rate: backendData.promedio_heart_rate,
+          spo2: backendData.promedio_oxigeno,
+          respiratory_rate: backendData.promedio_breathing,
+          evaluacion_oxigeno: backendData.evaluacion_oxigeno,
+          evaluacion_heart_rate: backendData.evaluacion_heart_rate,
+          evaluacion_breathing: backendData.evaluacion_breathing
+        };
+
+        setSleepData(data);
+        console.log('Data from backend:', backendData);
+      } catch (error) {
+        console.error("Error fetching data from backend:", error);
+      }
     };
 
     fetchData();
@@ -37,41 +45,33 @@ const StatisticsScreen = () => {
 
   const getStatInfo = (stat) => {
     const statInfo = {
-      sleep_score: {
-        title: "Puntuación del Sueño",
-        description: "La puntuación del sueño refleja la calidad general de tu sueño. Un puntaje más alto indica un mejor descanso.",
-        normalRange: "70-100",
-        userStatus: sleepData.sleep_score >= 70 ? "Normal" : "Bajo"
-      },
       heart_rate: {
         title: "Frecuencia Cardíaca",
         description: "La frecuencia cardíaca promedio durante el sueño. Un valor más bajo generalmente indica un buen descanso.",
         normalRange: "60-100 bpm",
-        userStatus: sleepData.heart_rate >= 60 && sleepData.heart_rate <= 100 ? "Normal" : "Fuera de rango"
+        userStatus: sleepData.heart_rate >= 60 && sleepData.heart_rate <= 100 ? "Normal" : "Fuera de rango",
+        iaAnalysis: sleepData.evaluacion_heart_rate ? `Análisis IA: ${sleepData.evaluacion_heart_rate}` : null
       },
       spo2: {
         title: "Oxígeno en Sangre (SpO2)",
         description: "El nivel de oxígeno en sangre indica qué tan bien tu cuerpo está absorbiendo oxígeno.",
         normalRange: "95-100%",
-        userStatus: sleepData.spo2 >= 95 ? "Normal" : "Bajo"
+        userStatus: sleepData.spo2 >= 95 ? "Normal" : "Bajo",
+        iaAnalysis: sleepData.evaluacion_oxigeno ? `Análisis IA: ${sleepData.evaluacion_oxigeno}` : null
       },
       respiratory_rate: {
         title: "Frecuencia Respiratoria",
         description: "Número de respiraciones por minuto durante el sueño.",
         normalRange: "12-20 respiraciones/min",
-        userStatus: sleepData.respiratory_rate >= 12 && sleepData.respiratory_rate <= 20 ? "Normal" : "Fuera de rango"
+        userStatus: sleepData.respiratory_rate >= 12 && sleepData.respiratory_rate <= 20 ? "Normal" : "Fuera de rango",
+        iaAnalysis: sleepData.evaluacion_breathing ? `Análisis IA: ${sleepData.evaluacion_breathing}` : null
       },
-      snore_index: {
-        title: "Índice de Ronquidos",
-        description: "El índice de ronquidos mide la frecuencia de los ronquidos durante la noche.",
-        normalRange: "0-5",
-        userStatus: sleepData.snore_index <= 5 ? "Normal" : "Elevado"
-      },
-      total_sleep: {
-        title: "Duración del Sueño",
-        description: "La cantidad total de sueño durante la noche.",
-        normalRange: "7-9 horas",
-        userStatus: (sleepData.total_sleep / 60) >= 7 && (sleepData.total_sleep / 60) <= 9 ? "Normal" : "Fuera de rango"
+      resultado_apnea: {
+        title: "Resultado Apnea",
+        description: "Resultado general de la evaluación para la apnea del sueño.",
+        normalRange: "Apnea detectada o No hay apnea",
+        userStatus: sleepData.resultado_apnea,
+        iaAnalysis: sleepData.resultado_apnea ? `Análisis IA: ${sleepData.resultado_apnea}` : null
       }
     };
     return statInfo[stat];
@@ -90,11 +90,6 @@ const StatisticsScreen = () => {
         <Text style={styles.title}>Estadísticas de Sueño</Text>
       </View>
 
-      <TouchableOpacity onPress={() => handlePress('sleep_score')} style={styles.statsBox}>
-        <Text style={styles.statsTitle}>Puntuación del Sueño</Text>
-        <Text style={styles.statsValue}>{sleepData.sleep_score}</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity onPress={() => handlePress('heart_rate')} style={styles.statsBox}>
         <Text style={styles.statsTitle}>Frecuencia Cardíaca Promedio</Text>
         <Text style={styles.statsValue}>{sleepData.heart_rate} bpm</Text>
@@ -110,14 +105,9 @@ const StatisticsScreen = () => {
         <Text style={styles.statsValue}>{sleepData.respiratory_rate} respiraciones/min</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => handlePress('total_sleep')} style={styles.statsBox}>
-        <Text style={styles.statsTitle}>Duración del Sueño</Text>
-        <Text style={styles.statsValue}>{(sleepData.total_sleep / 60).toFixed(1)} horas</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => handlePress('snore_index')} style={styles.statsBox}>
-        <Text style={styles.statsTitle}>Índice de Ronquidos</Text>
-        <Text style={styles.statsValue}>{sleepData.snore_index}</Text>
+      <TouchableOpacity onPress={() => handlePress('resultado_apnea')} style={styles.statsBox}>
+        <Text style={styles.statsTitle}>Resultado Apnea</Text>
+        <Text style={styles.statsValue}>{sleepData.resultado_apnea}</Text>
       </TouchableOpacity>
 
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
@@ -129,12 +119,21 @@ const StatisticsScreen = () => {
                 <Text style={styles.modalDescription}>{statDetails.description}</Text>
                 <Text style={styles.modalNormalRange}>Rango normal: {statDetails.normalRange}</Text>
                 <Text style={styles.modalUserStatus}>Tu estado: {statDetails.userStatus}</Text>
+                {statDetails.iaAnalysis && (
+                  <Text style={styles.modalIaAnalysis}>{statDetails.iaAnalysis}</Text>
+                )}
                 <Button title="Cerrar" onPress={() => setModalVisible(false)} />
               </>
             )}
           </View>
         </View>
       </Modal>
+      <View style={styles.historicosContainer}>
+        <Button
+          title="Históricos"
+          onPress={() => navigation.navigate('HistoricosScreen')}
+        />
+      </View>
     </ScrollView>
   );
 };
@@ -210,6 +209,16 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     marginBottom: 20,
   },
+  modalIaAnalysis: {
+    fontSize: 16,
+    color: '#007AFF',
+    marginTop: 10,
+    fontStyle: 'italic',
+  },
+  historicosContainer: 
+  { marginTop: 20, 
+    alignItems: 'center' }
+  
 });
 
 export default StatisticsScreen;

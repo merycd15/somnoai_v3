@@ -13,6 +13,8 @@ import StatisticsScreen from '../screens/StatisticsScreen';
 import FormScreen from '../screens/FormScreen';
 import ChatbotScreen from '../screens/chatbotScreen';
 import AudioRecorderPlayer from '../screens/AudioRecorderPlayer';
+import HistoricosScreen from '../screens/HistoricosScreen';
+import DetalleInformeScreen from '../screens/DetalleInformeScreen';
 
 
 const Stack = createStackNavigator();
@@ -111,6 +113,8 @@ const AppNavigator = () => {
             headerBackVisible: false // Asegura que la flecha sea visible
           }}
         />
+        <Stack.Screen name="HistoricosScreen" component={HistoricosScreen} options={{ title: 'Históricos' }} />
+        <Stack.Screen name="DetalleInformeScreen" component={DetalleInformeScreen} options={{ title: 'Detalle Informe' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
