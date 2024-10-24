@@ -19,12 +19,12 @@ const MyDreamScreen = () => {
         </View>
         {/* <Image source={require('../assets/miniCalendar.png')} style={styles.infoIcon} /> */}
         <View style={styles.infoContent}>
-          <Text style={styles.infoTitle}>Centro APNEA</Text>
+          <Text style={styles.infoTitle}>MEDICUS</Text>
           {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>Dirección</Text>
-          <Text style={styles.infoValue}>Horario</Text>
-          <Text style={styles.infoValue}>Teléfono</Text>
-          <Text style={styles.infoValueDif}>Mail</Text>
+          <Text style={styles.infoValue}>Azcuenaga 916</Text>
+          <Text style={styles.infoValue}>18hs</Text>
+          <Text style={styles.infoValue}>46760098</Text>
+          <Text style={styles.infoValueDif}>medicus@medic.com.ar</Text>
         </View>
       </TouchableOpacity>
       <View style={styles.infoBox}>
@@ -33,12 +33,12 @@ const MyDreamScreen = () => {
         </View>
         {/* <Image source={require('../assets/miniCalendar.png')} style={styles.infoIcon} /> */}
         <View style={styles.infoContent}>
-          <Text style={styles.infoTitle}>Centro APNEA</Text>
+          <Text style={styles.infoTitle}>OTAMENDI</Text>
           {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>Dirección</Text>
-          <Text style={styles.infoValue}>Horario</Text>
-          <Text style={styles.infoValue}>Teléfono</Text>
-          <Text style={styles.infoValueDif}>Mail</Text>
+          <Text style={styles.infoValue}>Paraguay 778</Text>
+          <Text style={styles.infoValue}>09hs</Text>
+          <Text style={styles.infoValue}>45678909</Text>
+          <Text style={styles.infoValueDif}>otamendi@hospital.com</Text>
         </View>
       </View>
       <View style={styles.infoBox}>
@@ -49,10 +49,10 @@ const MyDreamScreen = () => {
         <View style={styles.infoContent}>
           <Text style={styles.infoTitle}>Centro APNEA</Text>
           {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>Dirección</Text>
-          <Text style={styles.infoValue}>Horario</Text>
-          <Text style={styles.infoValue}>Teléfono</Text>
-          <Text style={styles.infoValueDif}>Mail</Text>
+          <Text style={styles.infoValue}>Medrano 34567 2do piso</Text>
+          <Text style={styles.infoValue}>16hs</Text>
+          <Text style={styles.infoValue}>1134567843</Text>
+          <Text style={styles.infoValueDif}>centrosueño@medicus.com.ar</Text>
         </View>
       </View>
 

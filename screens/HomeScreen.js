@@ -41,7 +41,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>{greeting} Juan</Text>
+          <Text style={styles.greeting}>{greeting} Fernando</Text>
           <Text style={styles.subGreeting}>¿Cómo dormiste hoy?</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>

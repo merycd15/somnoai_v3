@@ -15,6 +15,7 @@ import ChatbotScreen from '../screens/chatbotScreen';
 import AudioRecorderPlayer from '../screens/AudioRecorderPlayer';
 import HistoricosScreen from '../screens/HistoricosScreen';
 import DetalleInformeScreen from '../screens/DetalleInformeScreen';
+import MapSearchScreen from '../screens/MapSearchScreen';
 
 
 const Stack = createStackNavigator();
@@ -113,6 +114,7 @@ const AppNavigator = () => {
             headerBackVisible: false // Asegura que la flecha sea visible
           }}
         />
+         <Stack.Screen name="MapSearch" component={MapSearchScreen} />
         <Stack.Screen name="HistoricosScreen" component={HistoricosScreen} options={{ title: 'Históricos' }} />
         <Stack.Screen name="DetalleInformeScreen" component={DetalleInformeScreen} options={{ title: 'Detalle Informe' }} />
       </Stack.Navigator>
