@@ -1,4 +1,128 @@
 import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { ProgressChart } from 'react-native-chart-kit';
+import { useNavigation } from '@react-navigation/native';
+
+const HomeScreen = () => {
+  const [greeting, setGreeting] = useState('¡Buenas noches!');
+  const navigation = useNavigation();
+  const sleepScore = 0.85; // 85% representado como valor entre 0 y 1
+  const apneaPercentage = 15;
+
+  const spaceOptions = [
+    { id: '1', name: 'Mis Contactos', icon: require('../assets/contacts.png'), screen: 'ContactsScreen' },
+    { id: '2', name: 'Centros', icon: require('../assets/centers.png'), screen: 'CentersScreen' },
+    { id: '3', name: 'Grabaciones', icon: require('../assets/audio.png'), screen: 'AudioRecorderPlayer' },
+    { id: '4', name: 'Mi Sueño', icon: require('../assets/myDream.png'), screen: 'MyDreamScreen' },
+  ];
+
+  useEffect(() => {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 6 && currentHour < 12) setGreeting('¡Buenos días!');
+    else if (currentHour >= 12 && currentHour < 18) setGreeting('¡Buenas tardes!');
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Image source={require('../assets/night-sky.jpg')} style={styles.background} />
+
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.greeting}>{greeting} Fernando</Text>
+          <Text style={styles.subGreeting}>Esperamos que hayas descansado bien</Text>
+        </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Image
+            source={{ uri: 'https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x' }}
+            style={styles.avatar}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.chartContainer}>
+          <ProgressChart
+            data={{
+              labels: ['Sueño'], // Etiqueta
+              data: [sleepScore], // 85%
+            }}
+            width={Dimensions.get('window').width - 40}
+            height={220}
+            strokeWidth={16}
+            radius={50}
+            chartConfig={{
+              backgroundColor: '#000',
+              backgroundGradientFrom: '#1E2923',
+              backgroundGradientTo: '#08130D',
+              color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+            }}
+            hideLegend={false}
+          />
+          <Text style={styles.chartLabel}>Puntuación del Sueño: {Math.round(sleepScore * 100)}%</Text>
+        </View>
+
+        <View style={styles.mySpaceContainer}>
+          <Text style={styles.sectionTitle}>Mi Espacio</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {spaceOptions.map((option) => (
+              <TouchableOpacity
+                key={option.id}
+                style={styles.spaceOption}
+                onPress={() => navigation.navigate(option.screen)}
+              >
+                <Image source={option.icon} style={styles.spaceIcon} />
+                <Text style={styles.spaceText}>{option.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('chatbotScreen')}>
+        <Text style={styles.floatingButtonText}>💬</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#000' },
+  background: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.4 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, marginTop: 50 },
+  greeting: { fontSize: 28, fontWeight: 'bold', color: '#FFD700' },
+  subGreeting: { fontSize: 18, color: '#B0C4DE' },
+  avatar: { width: 60, height: 60, borderRadius: 30 },
+  content: { padding: 20, alignItems: 'center' },
+  chartContainer: { alignItems: 'center', marginVertical: 20 },
+  chartLabel: { fontSize: 18, color: '#FFF', marginTop: 10 },
+  mySpaceContainer: { marginVertical: 20 },
+  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFD700', marginBottom: 10 },
+  spaceOption: { alignItems: 'center', marginHorizontal: 10 },
+  spaceIcon: { width: 60, height: 60, marginBottom: 5 },
+  spaceText: { color: '#B0C4DE' },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    backgroundColor: '#FFD700',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+  },
+  floatingButtonText: { fontSize: 30, color: '#000' },
+});
+
+export default HomeScreen;
+
+
+
+/*import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -231,4 +355,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default HomeScreen;*/
