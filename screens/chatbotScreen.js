@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Animated, Easing } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Animated,
+  Easing,
+  Image, // Importación correcta
+} from 'react-native';
 import axios from 'axios';
 import Markdown from 'react-native-markdown-display';
 
@@ -117,10 +129,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: 10,
     maxWidth: '75%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
   },
   botMessage: {
     alignSelf: 'flex-start',
@@ -129,10 +137,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: 10,
     maxWidth: '75%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
   },
   messageText: { color: '#FFF', fontSize: 16 },
   inputContainer: { flexDirection: 'row', alignItems: 'center', padding: 10 },
@@ -148,15 +152,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#4A90E2',
     padding: 12,
     borderRadius: 25,
-    shadowColor: '#4A90E2',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
   },
   sendButtonText: { color: '#FFF', fontWeight: 'bold' },
 });
 
 export default ChatbotScreen;
+
 
 /*import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';

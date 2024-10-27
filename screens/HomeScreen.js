@@ -1,124 +1,163 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { ProgressChart } from 'react-native-chart-kit';
+import {
+  View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Animated,
+} from 'react-native';
+import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
-  const [greeting, setGreeting] = useState('¡Buenas noches!');
+  const [greeting, setGreeting] = useState('¡Buenas noches ');
+  const fadeAnim = useState(new Animated.Value(0))[0];
   const navigation = useNavigation();
-  const sleepScore = 0.85; // 85% representado como valor entre 0 y 1
-  const apneaPercentage = 15;
 
-  const spaceOptions = [
-    { id: '1', name: 'Mis Contactos', icon: require('../assets/contacts.png'), screen: 'ContactsScreen' },
-    { id: '2', name: 'Centros', icon: require('../assets/centers.png'), screen: 'CentersScreen' },
-    { id: '3', name: 'Grabaciones', icon: require('../assets/audio.png'), screen: 'AudioRecorderPlayer' },
-    { id: '4', name: 'Mi Sueño', icon: require('../assets/myDream.png'), screen: 'MyDreamScreen' },
+  const sleepScore = 85;
+  const observations = [
+    'Tu puntuación de sueño bajó un 10%. Intenta acostarte más temprano.',
+    'Detectamos 5 eventos apneicos. Te recomendamos hablar con un médico.',
   ];
 
   useEffect(() => {
+    // Animación de fade-in al cargar la pantalla.
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1500,
+      useNativeDriver: true,
+    }).start();
+
+    // Saludo dinámico según la hora.
     const currentHour = new Date().getHours();
-    if (currentHour >= 6 && currentHour < 12) setGreeting('¡Buenos días!');
-    else if (currentHour >= 12 && currentHour < 18) setGreeting('¡Buenas tardes!');
+    if (currentHour >= 6 && currentHour < 12) setGreeting('¡Buenos días ');
+    else if (currentHour >= 12 && currentHour < 18) setGreeting('¡Buenas tardes ');
   }, []);
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <Image source={require('../assets/night-sky.jpg')} style={styles.background} />
 
+      {/* Encabezado */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>{greeting} Fernando</Text>
-          <Text style={styles.subGreeting}>Esperamos que hayas descansado bien</Text>
+          <Text style={styles.greeting}>{greeting}FerCardozo!</Text>
+          <Text style={styles.date}>{new Date().toLocaleDateString()}</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image
-            source={{ uri: 'https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x' }}
+            source={{ uri: 'https://gravatar.com/avatar/your-avatar' }}
             style={styles.avatar}
           />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.chartContainer}>
-          <ProgressChart
-            data={{
-              labels: ['Sueño'], // Etiqueta
-              data: [sleepScore], // 85%
-            }}
-            width={Dimensions.get('window').width - 40}
-            height={220}
-            strokeWidth={16}
-            radius={50}
-            chartConfig={{
-              backgroundColor: '#000',
-              backgroundGradientFrom: '#1E2923',
-              backgroundGradientTo: '#08130D',
-              color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-            }}
-            hideLegend={false}
-          />
-          <Text style={styles.chartLabel}>Puntuación del Sueño: {Math.round(sleepScore * 100)}%</Text>
+        {/* Tarjeta de Puntaje */}
+        <Card style={styles.scoreCard}>
+          <Text style={styles.scoreTitle}>Puntuación del Sueño</Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.score}>{sleepScore}</Text>
+          </View>
+        </Card>
+
+        {/* Observaciones Rápidas */}
+        <View style={styles.observationsContainer}>
+          <Text style={styles.sectionTitle}>Observaciones</Text>
+          {observations.map((obs, index) => (
+            <Card key={index} style={styles.observationCard}>
+              <Text style={styles.observationText}>{obs}</Text>
+            </Card>
+          ))}
         </View>
 
-        <View style={styles.mySpaceContainer}>
-          <Text style={styles.sectionTitle}>Mi Espacio</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {spaceOptions.map((option) => (
-              <TouchableOpacity
-                key={option.id}
-                style={styles.spaceOption}
-                onPress={() => navigation.navigate(option.screen)}
-              >
-                <Image source={option.icon} style={styles.spaceIcon} />
-                <Text style={styles.spaceText}>{option.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+        {/* Tarjetas de Navegación */}
+        <Text style={styles.sectionTitle}>Mi espacio</Text>
+        <View style={styles.cardsContainer}>
+        
+          {[
+            { id: '1', name: 'Centros Médicos', screen: 'CentersScreen', icon: require('../assets/centers.png') },
+            { id: '2', name: 'Histórico', screen: 'AudioRecorderPlayer', icon: require('../assets/history.png') },
+            { id: '3', name: 'Detalle del Sueño', screen: 'MyDreamScreen', icon: require('../assets/myDream.png') },
+            { id: '4', name: 'Estadisticas', screen: 'StatisticsScreen', icon: require('../assets/info.png') },
+          ].map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() => navigation.navigate(item.screen)}
+            >
+              <Image source={item.icon} style={styles.cardIcon} />
+              <Text style={styles.cardText}>{item.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Sección del Chatbot: Snoory */}
+        <View style={styles.chatbotContainer}>
+          <Image source={require('../assets/chatbot.jpg')} style={styles.chatbotIcon} />
+          <TouchableOpacity
+            style={styles.chatbotButton}
+            onPress={() => navigation.navigate('chatbotScreen')}
+          >
+            <Text style={styles.chatbotText}>💬 Habla con Snoory</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-
-      <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('chatbotScreen')}>
-        <Text style={styles.floatingButtonText}>💬</Text>
-      </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  background: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.4 },
+  background: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.5 },
   header: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, marginTop: 50 },
   greeting: { fontSize: 28, fontWeight: 'bold', color: '#FFD700' },
-  subGreeting: { fontSize: 18, color: '#B0C4DE' },
+  date: { fontSize: 16, color: '#B0C4DE' },
   avatar: { width: 60, height: 60, borderRadius: 30 },
-  content: { padding: 20, alignItems: 'center' },
-  chartContainer: { alignItems: 'center', marginVertical: 20 },
-  chartLabel: { fontSize: 18, color: '#FFF', marginTop: 10 },
-  mySpaceContainer: { marginVertical: 20 },
+  content: { padding: 20 },
+  scoreCard: { backgroundColor: '#1F2937', padding: 20, borderRadius: 10, marginBottom: 20 },
+  scoreTitle: { fontSize: 18, color: '#FFF', marginBottom: 10, textAlign: 'center' },
+  scoreContainer: { alignItems: 'center' },
+  score: { fontSize: 48, fontWeight: 'bold', color: '#00FF00' },
+  observationsContainer: { marginBottom: 20 },
   sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFD700', marginBottom: 10 },
-  spaceOption: { alignItems: 'center', marginHorizontal: 10 },
-  spaceIcon: { width: 60, height: 60, marginBottom: 5 },
-  spaceText: { color: '#B0C4DE' },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 30,
-    backgroundColor: '#FFD700',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
+  observationCard: { backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: 15, borderRadius: 10, marginBottom: 10 },
+  observationText: { color: '#B0C4DE' },
+  cardsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
-  floatingButtonText: { fontSize: 30, color: '#000' },
+  card: {
+    backgroundColor: '#1F2937',
+    width: (Dimensions.get('window').width - 60) / 2,
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  cardIcon: { width: 50, height: 50, marginBottom: 10 },
+  cardText: { color: '#B0C4DE', fontSize: 16, textAlign: 'center' },
+  chatbotContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginTop: 20,
+    backgroundColor: '#FFF',
+    padding: 15,
+    borderRadius: 10,
+  },
+  chatbotIcon: { width: 60, height: 60, borderRadius: 30 },
+  chatbotButton: {
+    backgroundColor: '#FFD700',
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+  },
+  chatbotText: { fontSize: 18, fontWeight: 'bold', color: '#000' },
 });
 
 export default HomeScreen;
+
+
+
 
 
 
