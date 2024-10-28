@@ -36,10 +36,8 @@ const AppNavigator = () => {
           name="Home" 
           component={HomeScreen} 
           options={{ 
-            title: 'Home',
-            headerBackTitle: 'Back', // Título de la flecha de regreso
-            headerBackVisible: false // Asegura que la flecha sea visible
-          }}  // Opciones para la pantalla de inicio
+            headerShown: false 
+         }}
         />
         <Stack.Screen
           name="RecoverPassword"

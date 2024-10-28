@@ -1,207 +1,181 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, TextInput, View, Image, Text, TouchableOpacity } from 'react-native';
+import { 
+  SafeAreaView, 
+  StyleSheet, 
+  TextInput, 
+  View, 
+  Image, 
+  Text, 
+  TouchableOpacity, 
+  Alert, 
+  ActivityIndicator, 
+  ScrollView 
+} from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
 
 const ProfileScreen = () => {
-  const [error, setError] = useState(''); 
-  const [avatarUri, setAvatarUri] = useState('https://gravatar.com/avatar/efd37bb88aab610ee5741db63cbbc53c?s=400&d=robohash&r=x');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [telephone, setTelephone] = useState('');
-  const [age, setAge] = useState('');
-  const [weight, setWeight] = useState('');
-  const [height, setHeight] = useState('');
-  const [medicalCare, setMedicalCare] = useState('');  
-  const [isEditing, setIsEditing] = useState(false); // Estado para controlar la edición
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [avatarUri, setAvatarUri] = useState('');
+  const [userData, setUserData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    surname: '',
+    telephone: '',
+    age: '',
+    weight: '',
+    height: '',
+    medicalCare: '',
+  });
+  const [isEditing, setIsEditing] = useState(false);
 
-  const validateEmail = (email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
-
-  const validateInput = () => {
-    setError('');
-    if (!validateEmail(email)) {
-      setError('El correo electrónico no es válido.');
-      return;
-    }
-    if (!password || !name || !surname || !telephone || !age || !weight || !height || !medicalCare) {
-      setError('Todos los campos deben estar llenos.');
-      return;
-    }
-    console.log('Datos válidos:', { email, password, name, surname, telephone, age, weight, height, medicalCare });
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('https://proyectosomnoai.onrender.com/SomnoAI/getUsuarios/');
+        setUserData(response.data);
+        setAvatarUri(response.data.avatar || 'https://gravatar.com/avatar/...');
+      } catch (error) {
+        console.error('Error al cargar los datos del usuario:', error);
+        Alert.alert('Error', 'No se pudieron cargar los datos del usuario.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleImagePicker = () => {
-    const options = {
-      mediaType: 'photo',
-      quality: 1,
-    };
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('El usuario canceló la selección de imagen');
-      } else if (response.errorMessage) {
-        console.log('Error:', response.errorMessage);
-      } else {
-        const uri = response.assets[0].uri;
-        setAvatarUri(uri);
+    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
+      if (!response.didCancel && !response.errorMessage) {
+        setAvatarUri(response.assets[0].uri);
       }
     });
   };
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing); // Cambia el estado de edición
+  const handleInputChange = (field, value) => {
+    setUserData({ ...userData, [field]: value });
   };
 
-  return (
-    <SafeAreaView>
-      <View style={styles.header}>
-        <View>
-          <TouchableOpacity onPress={handleImagePicker}>
-            <Image source={{ uri: avatarUri }} style={styles.avatar} />
-            <TouchableOpacity style={styles.editIcon} onPress={handleEditToggle}>
-              <Icon name="edit" size={14} color="#fff" />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.name}>{name} {surname}</Text>
+  const handleUpdate = async () => {
+    try {
+      await axios.put('https://proyectosomnoai.onrender.com/SomnoAI/actualizarDatos/user', { ...userData, avatar: avatarUri });
+      Alert.alert('Éxito', 'Datos actualizados correctamente');
+      setIsEditing(false);
+    } catch (error) {
+      Alert.alert('Error', 'No se pudieron actualizar los datos.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#1b50a6" />
       </View>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <TextInput
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Correo electrónico"
-        keyboardType="email-address"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-        placeholder="Contraseña"
-        keyboardType="default"
-        secureTextEntry={true}
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setName}
-        value={name}
-        placeholder="Nombre"
-        keyboardType="default"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setSurname}
-        value={surname}
-        placeholder="Apellido"
-        keyboardType="default"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setTelephone}
-        value={telephone}
-        placeholder="Teléfono"
-        keyboardType="phone-pad"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setAge}
-        value={age}
-        placeholder="Edad"
-        keyboardType="numeric"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setWeight}
-        value={weight}
-        placeholder="Peso"
-        keyboardType="decimal-pad"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setHeight}
-        value={height}
-        placeholder="Altura"
-        keyboardType="decimal-pad"
-        editable={isEditing} // Controla si es editable
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setMedicalCare}
-        value={medicalCare}
-        placeholder="Obra social"
-        keyboardType="default"
-        editable={isEditing} // Controla si es editable
-      />
-      <TouchableOpacity style={styles.button} onPress={validateInput}>
-        <Text style={styles.buttonText}>Enviar</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleImagePicker}>
+          <Image source={{ uri: avatarUri }} style={styles.avatar} />
+          <TouchableOpacity style={styles.editIcon} onPress={() => setIsEditing(!isEditing)}>
+            <Icon name="edit" size={18} color="#fff" />
+          </TouchableOpacity>
+        </TouchableOpacity>
+        <Text style={styles.name}>{userData.name} {userData.surname}</Text>
+      </View>
+
+      {error && <Text style={styles.errorText}>{error}</Text>}
+
+      {['email', 'password', 'telephone', 'age', 'weight', 'height', 'medicalCare'].map((field) => (
+        <TextInput
+          key={field}
+          style={styles.input}
+          value={userData[field]}
+          onChangeText={(value) => handleInputChange(field, value)}
+          placeholder={capitalize(field)}
+          keyboardType={field === 'telephone' || field === 'age' || field === 'weight' || field === 'height'
+            ? 'numeric' 
+            : 'default'}
+          secureTextEntry={field === 'password'}
+          editable={isEditing}
+        />
+      ))}
+
+      {isEditing && (
+        <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+          <Text style={styles.buttonText}>Actualizar Datos</Text>
+        </TouchableOpacity>
+      )}
+    </ScrollView>
   );
 };
 
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    flexGrow: 1,
     padding: 20,
+    backgroundColor: '#b3c0d6',
   },
   header: {
     alignItems: 'center',
-    justifyContent: 'center',
     marginVertical: 20,
-    marginTop: 40,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    textAlign: 'center',
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
   },
   editIcon: {
     position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#007bff',
-    borderRadius: 12,
-    padding: 4,
+    right: -5,
+    bottom: -5,
+    backgroundColor: '#1b50a6',
+    borderRadius: 15,
+    padding: 5,
   },
-  errorText: {
-    color: 'red',
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1b50a6',
+  },
+  input: {
+    height: 50,
+    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
   button: {
-    width: '95%',
-    height: 50,
+    backgroundColor: '#4a90e2',
+    padding: 15,
     borderRadius: 25,
-    backgroundColor: '#007BFF',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 'auto',
+    marginVertical: 20,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

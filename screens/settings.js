@@ -60,6 +60,14 @@ const SettingsScreen = () => {
         <Text style={styles.optionText}>Políticas de Privacidad</Text>
       </TouchableOpacity>
 
+      {/* About us */}
+      <TouchableOpacity
+        style={styles.option}
+        onPress={() => alert('About us')}
+      >
+        <Text style={styles.optionText}>About us</Text>
+      </TouchableOpacity>
+
       {/* Cerrar Sesión */}
       <TouchableOpacity
         style={styles.logoutButton}
