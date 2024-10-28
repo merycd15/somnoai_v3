@@ -2,7 +2,7 @@
   "name": "somnoai_v3",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --dev-client",
+    "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
@@ -31,7 +31,6 @@
     "react-native-progress-circle": "^2.1.0",
     "react-native-svg": "^15.8.0",
     "react-native-web": "~0.19.10",
-    "react-native-webview": "^13.12.3",
     "victory-native": "^41.8.0"
   },
   "devDependencies": {
