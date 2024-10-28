@@ -32,7 +32,7 @@ const HomeScreen = () => {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <Image source={require('../assets/night-sky.jpg')} style={styles.background} />
+      {/*<Image source={require('../assets/night-sky.jpg')} style={styles.background} />*/}
 
       {/* Encabezado */}
       <View style={styles.header}>
@@ -104,21 +104,21 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
+  container: { flex: 1, backgroundColor: '#b3c0d6' },
   background: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover', opacity: 0.5 },
   header: { flexDirection: 'row', justifyContent: 'space-between', padding: 20, marginTop: 50 },
-  greeting: { fontSize: 28, fontWeight: 'bold', color: '#FFD700' },
+  greeting: { fontSize: 28, fontWeight: 'bold', color: '#345c9c' },
   date: { fontSize: 16, color: '#B0C4DE' },
   avatar: { width: 60, height: 60, borderRadius: 30 },
   content: { padding: 20 },
-  scoreCard: { backgroundColor: '#1F2937', padding: 20, borderRadius: 10, marginBottom: 20 },
+  scoreCard: { backgroundColor: '#1b50a6', padding: 20, borderRadius: 10, marginBottom: 20 },
   scoreTitle: { fontSize: 18, color: '#FFF', marginBottom: 10, textAlign: 'center' },
   scoreContainer: { alignItems: 'center' },
   score: { fontSize: 48, fontWeight: 'bold', color: '#00FF00' },
   observationsContainer: { marginBottom: 20 },
-  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFD700', marginBottom: 10 },
-  observationCard: { backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: 15, borderRadius: 10, marginBottom: 10 },
-  observationText: { color: '#B0C4DE' },
+  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#345c9c', marginBottom: 10 },
+  observationCard: { backgroundColor: '#1b50a6', padding: 15, borderRadius: 10, marginBottom: 10 },
+  observationText: { color: '#FFF' },
   cardsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#1F2937',
+    backgroundColor: '#1b50a6',
     width: (Dimensions.get('window').width - 60) / 2,
     padding: 15,
     borderRadius: 10,
@@ -134,13 +134,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   cardIcon: { width: 50, height: 50, marginBottom: 10 },
-  cardText: { color: '#B0C4DE', fontSize: 16, textAlign: 'center' },
+  cardText: { color: '#B0C4DE', fontSize: 18, textAlign: 'center' },
   chatbotContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     marginTop: 20,
-    backgroundColor: '#FFF',
+    backgroundColor: '#1b50a6',
     padding: 15,
     borderRadius: 10,
   },

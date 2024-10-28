@@ -1,4 +1,185 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  SafeAreaView, StyleSheet, TextInput, View, Text, TouchableOpacity, Animated, Image,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+
+const LoginScreen = () => {
+  const [error, setError] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const fadeAnim = useState(new Animated.Value(0))[0];
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handleLogin = async () => {
+    if (!username) {
+      setError('El nombre de usuario es obligatorio.');
+      return;
+    }
+    if (!password) {
+      setError('La contraseña es obligatoria.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('https://proyectosomnoai.onrender.com/SomnoAI/Login/', {
+        username,
+        password,
+      });
+
+      if (response.data.message === 'Inicio de sesión exitoso.') {
+        navigation.navigate('Home');
+      } else {
+        setError(response.data.error || 'Error en el inicio de sesión.');
+      }
+    } catch (error) {
+      setError('Hubo un problema con el inicio de sesión.');
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
+        {/* Logo */}
+        <Image source={require('../assets/LogoNombre.png')} style={styles.logo} />
+
+        {/* Error Message */}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        {/* Username Input */}
+        <TextInput
+          style={styles.input}
+          onChangeText={setUsername}
+          value={username}
+          placeholder="Usuario"
+          placeholderTextColor="#8A8A8A"
+        />
+
+        {/* Password Input */}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.inputPassword}
+            onChangeText={setPassword}
+            value={password}
+            placeholder="Contraseña"
+            placeholderTextColor="#8A8A8A"
+            secureTextEntry={!isPasswordVisible}
+          />
+          <TouchableOpacity onPress={togglePasswordVisibility}>
+            <Icon name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={24} color="#8A8A8A" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Login Button */}
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
+
+        {/* Links */}
+        <View style={styles.linksContainer}>
+          <Text style={styles.link} onPress={() => navigation.navigate('RecoverPassword')}>
+            ¿Olvidaste tu contraseña?
+          </Text>
+          <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
+            ¿Deseas registrarte?
+          </Text>
+        </View>
+      </Animated.View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#b3c0d6',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  content: {
+    alignItems: 'center',
+  },
+  logo: {
+    width: 400,
+    height: 240,
+    resizeMode: 'contain',
+    marginBottom: 40,
+  },
+  input: {
+    width: '85%',
+    height: 45,
+    backgroundColor: '#FFF',
+    borderColor: '#D1D5DB',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '85%',
+    backgroundColor: '#FFF',
+    borderColor: '#D1D5DB',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  inputPassword: {
+    flex: 1,
+    height: 45,
+    fontSize: 16,
+  },
+  button: {
+    width: '85%',
+    height: 50,
+    backgroundColor: '#345c9c',
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  linksContainer: {
+    alignItems: 'center',
+  },
+  link: {
+    color: '#345c9c',
+    fontSize: 20,
+    marginVertical: 5,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+});
+
+export default LoginScreen;
+
+
+
+/*import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -183,4 +364,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LoginScreen;
+export default LoginScreen;*/
