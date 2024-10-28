@@ -1,63 +1,123 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
+  TouchableOpacity,
+  Linking,
+  Alert,
+} from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
+import * as Location from 'expo-location';
+import axios from 'axios';
 
-const MyDreamScreen = () => {
-    const navigation = useNavigation();
+const CentersScreen = () => {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [centers, setCenters] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permiso para acceder a la ubicación denegado.');
+        return;
+      }
+
+      let userLocation = await Location.getCurrentPositionAsync({});
+      setLocation(userLocation.coords);
+      fetchCenters(userLocation.coords);
+    })();
+  }, []);
+
+  const fetchCenters = async (coords) => {
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
+        {
+          params: {
+            location: `${coords.latitude},${coords.longitude}`,
+            radius: 10000,
+            keyword: 'apnea del sueño hospitales',
+            type: 'hospital',
+            key: 'AIzaSyDJDfXQxCEaxGHhXxIfoTQvbvGZ9PuLz7k',
+          },
+        }
+      );
+      setCenters(response.data.results);
+    } catch (error) {
+      console.error('Error al buscar centros médicos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openGoogleMapsSearch = () => {
+    if (location) {
+      const url = `https://www.google.com/maps/search/?api=1&query=apnea+del+sueño+hospitales&near=${location.latitude},${location.longitude}`;
+      Linking.openURL(url).catch(() =>
+        Alert.alert('Error', 'No se pudo abrir Google Maps.')
+      );
+    } else {
+      Alert.alert('Error', 'Ubicación no disponible.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#1b50a6" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => acción para volver atrás}> */}
-          {/* <Image source={require('../assets/back-arrow.png')} style={styles.backArrow} /> */}
-        {/* </TouchableOpacity> */}
-        <Image source={require('../assets/centers.png')} style={styles.icon} />
-        <Text style={styles.title}>Centros</Text>
-      </View>
-      <TouchableOpacity style={styles.infoBox} onPress={() => navigation.navigate('FormScreen')}>
-        <View style={styles.calendarIconContainer}>
-          <Image source={require('../assets/provisorioMaps.png')} style={styles.calendarIcon} />
-        </View>
-        {/* <Image source={require('../assets/miniCalendar.png')} style={styles.infoIcon} /> */}
-        <View style={styles.infoContent}>
-          <Text style={styles.infoTitle}>MEDICUS</Text>
-          {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>Azcuenaga 916</Text>
-          <Text style={styles.infoValue}>18hs</Text>
-          <Text style={styles.infoValue}>46760098</Text>
-          <Text style={styles.infoValueDif}>medicus@medic.com.ar</Text>
-        </View>
+      {location ? (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
+          showsUserLocation={true}
+        >
+          {centers.map((center, index) => (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: center.geometry.location.lat,
+                longitude: center.geometry.location.lng,
+              }}
+            >
+              <Callout>
+                <View style={styles.calloutContainer}>
+                  <Text style={styles.calloutTitle}>{center.name}</Text>
+                  <Text>{center.vicinity}</Text>
+                  {center.opening_hours && (
+                    <Text>
+                      {center.opening_hours.open_now ? 'Abierto ahora' : 'Cerrado'}
+                    </Text>
+                  )}
+                </View>
+              </Callout>
+            </Marker>
+          ))}
+        </MapView>
+      ) : (
+        <Text style={styles.errorText}>{errorMsg}</Text>
+      )}
+      <TouchableOpacity style={styles.reloadButton} onPress={() => setLoading(true)}>
+        <Text style={styles.reloadButtonText}>Actualizar Ubicación</Text>
       </TouchableOpacity>
-      <View style={styles.infoBox}>
-        <View style={styles.calendarIconContainer}>
-          <Image source={require('../assets/provisorioMaps.png')} style={styles.calendarIcon} />
-        </View>
-        {/* <Image source={require('../assets/miniCalendar.png')} style={styles.infoIcon} /> */}
-        <View style={styles.infoContent}>
-          <Text style={styles.infoTitle}>OTAMENDI</Text>
-          {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>Paraguay 778</Text>
-          <Text style={styles.infoValue}>09hs</Text>
-          <Text style={styles.infoValue}>45678909</Text>
-          <Text style={styles.infoValueDif}>otamendi@hospital.com</Text>
-        </View>
-      </View>
-      <View style={styles.infoBox}>
-        <View style={styles.calendarIconContainer}>
-          <Image source={require('../assets/provisorioMaps.png')} style={styles.calendarIcon} />
-        </View>
-        {/* <Image source={require('../assets/miniCalendar.png')} style={styles.infoIcon} /> */}
-        <View style={styles.infoContent}>
-          <Text style={styles.infoTitle}>Centro APNEA</Text>
-          {/* El siguiente dato habría que tomarlo de algún lado */}
-          <Text style={styles.infoValue}>Medrano 34567 2do piso</Text>
-          <Text style={styles.infoValue}>16hs</Text>
-          <Text style={styles.infoValue}>1134567843</Text>
-          <Text style={styles.infoValueDif}>centrosueño@medicus.com.ar</Text>
-        </View>
-      </View>
-
-
- 
+      <TouchableOpacity style={styles.mapsButton} onPress={openGoogleMapsSearch}>
+        <Text style={styles.mapsButtonText}>Buscar en Google Maps</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -65,103 +125,56 @@ const MyDreamScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
+    backgroundColor: '#b3c0d6',
   },
-  header: {
-    flexDirection: 'row',          // Para organizar en fila
-    alignItems: 'center',          // Centra verticalmente los elementos
-    justifyContent: 'space-between', // Distribuye los elementos entre los extremos izquierdo y derecho
-    paddingHorizontal: 20,         // Añade relleno a los lados
-    marginTop: 20,                 // Añade un margen superio
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height - 150,
   },
-  backArrow: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4A4A4A',
-    marginRight: '10%',                 // Mueve "Mi Sueño" más cerca de la imagen
-  },
-  icon: {
-    width: 100,                      // Ajusta el tamaño de la imagen
-    height: 100,                     // Ajusta el tamaño de la imagen
-    alignSelf: 'center',
-    marginVertical: 20,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
-    padding: 15,
-    marginVertical: 10,
-    alignItems: 'center',
-    width: '100%', // Ancho deseado
-    height: '15%', // Altura deseada
-  },
-  infoIcon: {
-    width: 30,
-    height: 30,
-    marginRight: 20,
-  },
-  infoContent: {
+  loaderContainer: {
     flex: 1,
-  },
-  infoTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#4A4A4A',
-    alignSelf:'flex-end',
-  },
-  infoValue: {
-    fontSize: 15,
-    fontWeight: 'thin',
-    color: '#4A4A4A',
-    marginTop: 5,
-    alignSelf:'flex-end',
-  },
-  infoValueDif: {
-    fontSize: 15,
-    fontWeight: 'thin',
-    color: '#007AFF',
-    marginTop: 5,
-    alignSelf:'flex-end',
-  },
-  statsBox: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
-    padding: 15,
-    marginTop: 10,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  statsTitle: {
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  reloadButton: {
+    backgroundColor: '#FFD700',
+    padding: 10,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  reloadButtonText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  mapsButton: {
+    backgroundColor: '#4A90E2',
+    padding: 10,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  mapsButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  calloutContainer: {
+    width: 200,
+    padding: 10,
+  },
+  calloutTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4A4A4A',
-    marginBottom: 10,
-  },
-  statsGraph: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  bar: {
-    width: 20,
-    backgroundColor: '#007AFF',
-    borderRadius: 5,
-  },
-  calendarIconContainer: {
-    // justifyContent: 'center', // Centra el icono verticalmente
-    // alignItems: 'top',
-    alignSelf: 'stretch', // Mueve el contenedor del ícono hacia la parte superior derecha
-  },
-  calendarIcon: {
-    width: 150,
-    height: 120,
+    marginBottom: 5,
   },
 });
 
-export default MyDreamScreen;
+export default CentersScreen;

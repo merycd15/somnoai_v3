@@ -38,7 +38,7 @@ const HomeScreen = () => {
           <Text style={styles.greeting}>{greeting}</Text>
           <Text style={styles.date}>{new Date().toLocaleDateString()}</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+        <TouchableOpacity onPress={() => navigation.navigate('SettingsScreen')}>
           <Image
             source={require('../assets/settings.png')}
             style={styles.settingsIcon}
