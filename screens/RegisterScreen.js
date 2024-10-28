@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
-  View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ScrollView, Image, Picker,
+  View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ScrollView, Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
+
 import axios from 'axios';
 
 const RegistroScreen = () => {

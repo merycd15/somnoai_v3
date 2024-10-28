@@ -16,6 +16,7 @@ import AudioRecorderPlayer from '../screens/AudioRecorderPlayer';
 import HistoricosScreen from '../screens/HistoricosScreen';
 import DetalleInformeScreen from '../screens/DetalleInformeScreen';
 import MapSearchScreen from '../screens/MapSearchScreen';
+import SettingsScreen from '../screens/settings';
 
 
 const Stack = createStackNavigator();
@@ -28,9 +29,7 @@ const AppNavigator = () => {
           name="Login" 
           component={LoginScreen} 
           options={{ 
-            title: 'Login',
-            headerBackTitle: 'Back', // Título de la flecha de regreso
-            headerBackVisible: false // Asegura que la flecha sea visible
+             headerShown: false 
           }}  // Opciones para la pantalla de inicio
         />
         <Stack.Screen 
@@ -59,12 +58,10 @@ const AppNavigator = () => {
           }}
         />
         <Stack.Screen name="Register" component={RegisterScreen} 
-          options={{ 
-            title: 'Register',
-            headerBackTitle: 'Back', // Título de la flecha de regreso
-            headerBackVisible: false // Asegura que la flecha sea visible
-          }}
-        />
+           options={{ 
+            headerShown: false 
+         }}  // Opciones para la pantalla de inicio
+       />
         <Stack.Screen name="MyDreamScreen" component={MyDreamScreen} 
           options={{ 
             title: 'MyDreamScreen',
@@ -117,6 +114,7 @@ const AppNavigator = () => {
          <Stack.Screen name="MapSearch" component={MapSearchScreen} />
         <Stack.Screen name="HistoricosScreen" component={HistoricosScreen} options={{ title: 'Históricos' }} />
         <Stack.Screen name="DetalleInformeScreen" component={DetalleInformeScreen} options={{ title: 'Detalle Informe' }} />
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Configuraciones' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
