@@ -1,241 +1,225 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Image, 
+  StyleSheet, 
+  FlatList, 
+  Alert 
+} from 'react-native';
+import { Audio } from 'expo-av';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
-const ResultadosHistoricos = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState('semana');
-  const [data, setData] = useState([]);
+const SnoreScreen = () => {
+  const [sound, setSound] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [snoreAnalysis, setSnoreAnalysis] = useState('');
 
-  // Simulación de datos históricos
-  const dataHistorica = {
-    dia: [65, 70, 75, 60, 80, 78, 85],
-    semana: [70, 72, 68, 74, 71, 73, 75],
-    mes: [70, 75, 73, 80, 82, 78, 79],
+  const screenWidth = Dimensions.get('window').width;
+
+  const snoreList = [
+    { 
+      id: '1', 
+      date: '2024-10-28', 
+      audio: require('../assets/ronquidos/Ronquido1-normal.wav'), 
+      spectroData: [10, 20, 15, 25, 30, 28], 
+      analysis: 'Ronquido dentro del rango normal.' 
+    },
+    { 
+      id: '2', 
+      date: '2024-10-27', 
+      audio: require('../assets/ronquidos/Prueba.wav'), 
+      spectroData: [40, 50, 45, 55, 60, 58], 
+      analysis: 'Ronquido con frecuencia alta. Consulte a un médico.' 
+    },
+    { 
+      id: '', 
+      date: '2024-10-26', 
+      audio: require('../assets/ronquidos/salamisound-5789888-loud-snoring-sleep-apnea.wav'), 
+      spectroData: [40, 54, 55, 55, 90, 48], 
+      analysis: 'Ronquido con frecuencia alta. Consulte a un médico.' 
+    },
+  ];
+
+  const NORMAL_THRESHOLD = 30;
+
+  const playSnore = async (audio, analysis) => {
+    try {
+      if (isPlaying && sound) {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setIsPlaying(false);
+        setSnoreAnalysis('');
+      } else {
+        const { sound: newSound } = await Audio.Sound.createAsync(audio);
+        setSound(newSound);
+        setIsPlaying(true);
+        setSnoreAnalysis(analysis);
+        await newSound.playAsync();
+
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (!status.isPlaying) {
+            setIsPlaying(false);
+            setSnoreAnalysis('');
+          }
+        });
+      }
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo reproducir el audio');
+      console.error('Error al reproducir el audio:', error);
+    }
   };
 
-  useEffect(() => {
-    // Actualiza los datos al cambiar el periodo seleccionado
-    setData(dataHistorica[selectedPeriod]);
-  }, [selectedPeriod]);
+  const renderSnoreItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.snoreItem}
+      onPress={() => playSnore(item.audio, item.analysis)}
+    >
+      <Text style={styles.snoreText}>Ronquido del {item.date}</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Resultados Históricos</Text>
+    <FlatList
+      data={snoreList}
+      keyExtractor={(item) => item.id}
+      ListHeaderComponent={() => (
+        <View style={styles.container}>
+          <Text style={styles.title}>Espectro del Último Ronquido</Text>
 
-      <View style={styles.periodButtons}>
-        {['dia', 'semana', 'mes'].map((period) => (
+          <LineChart
+            data={{
+              labels: ['0s', '1s', '2s', '3s', '4s', '5s'],
+              datasets: [{ data: snoreList[0].spectroData }],
+            }}
+            width={screenWidth - 40}
+            height={220}
+            chartConfig={{
+              backgroundGradientFrom: '#1b50a6',
+              backgroundGradientTo: '#4a90e2',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            }}
+            style={styles.chart}
+            bezier
+            withHorizontalLines
+            segments={6}
+            yAxisSuffix="dB"
+            yAxisInterval={10} // Cada línea horizontal representa 10dB
+            renderDotContent={({ x, y }) => (
+              <View 
+                style={{ 
+                  position: 'absolute', 
+                  top: y - 6, 
+                  left: x - 6, 
+                  backgroundColor: 'red', 
+                  borderRadius: 6, 
+                  width: 12, 
+                  height: 12 
+                }} 
+              />
+            )}
+            decorator={() => (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 220 - (NORMAL_THRESHOLD * 220) / 60,
+                  left: 0,
+                  right: 0,
+                  height: 2,
+                  backgroundColor: 'green',
+                }}
+              />
+            )}
+          />
+
           <TouchableOpacity
-            key={period}
-            style={[
-              styles.periodButton,
-              selectedPeriod === period && styles.selectedButton,
-            ]}
-            onPress={() => setSelectedPeriod(period)}
+            style={styles.playButton}
+            onPress={() => playSnore(snoreList[0].audio, snoreList[0].analysis)}
           >
-            <Text style={styles.buttonText}>{period.toUpperCase()}</Text>
+            <Image
+              source={require('../assets/play.png')}
+              style={styles.playIcon}
+            />
+            <Text style={styles.playText}>
+              {isPlaying ? 'Detener' : 'Reproducir Último Ronquido'}
+            </Text>
           </TouchableOpacity>
-        ))}
-      </View>
 
-      <LineChart
-        data={{
-          labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
-          datasets: [
-            {
-              data: data,
-            },
-          ],
-        }}
-        width={Dimensions.get('window').width - 40}
-        height={220}
-        yAxisSuffix=" BPM"
-        chartConfig={{
-          backgroundColor: '#022173',
-          backgroundGradientFrom: '#1E3A8A',
-          backgroundGradientTo: '#3B82F6',
-          decimalPlaces: 1,
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-        }}
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
-      />
+          {snoreAnalysis !== '' && (
+            <Text style={styles.analysisText}>{snoreAnalysis}</Text>
+          )}
 
-      <View style={styles.statsContainer}>
-        <Text style={styles.statsText}>Promedio: {Math.round(data.reduce((a, b) => a + b, 0) / data.length)} BPM</Text>
-        <Text style={styles.statsText}>Máximo: {Math.max(...data)} BPM</Text>
-        <Text style={styles.statsText}>Mínimo: {Math.min(...data)} BPM</Text>
-      </View>
-
-      <Text style={styles.sectionTitle}>Eventos Anormales</Text>
-      <FlatList
-        data={[
-          { id: '1', evento: 'Bajo nivel de oxígeno - 3 veces esta semana' },
-          { id: '2', evento: 'Ronquidos frecuentes - 5 noches' },
-        ]}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Text style={styles.eventItem}>{item.evento}</Text>}
-      />
-    </ScrollView>
+          <Text style={styles.subtitle}>Historial de Ronquidos</Text>
+        </View>
+      )}
+      renderItem={renderSnoreItem}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     padding: 20,
+    backgroundColor: '#b3c0d6',
   },
-  header: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#345c9c',
     textAlign: 'center',
   },
-  periodButtons: {
+  chart: {
+    marginVertical: 20,
+    borderRadius: 16,
+  },
+  playButton: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1b50a6',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 20,
   },
-  periodButton: {
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
+  playIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
   },
-  selectedButton: {
-    backgroundColor: '#4CAF50',
-  },
-  buttonText: {
-    color: '#fff',
+  playText: {
+    color: '#FFF',
+    fontSize: 18,
     fontWeight: 'bold',
   },
-  statsContainer: {
-    marginVertical: 20,
-    alignItems: 'center',
+  analysisText: {
+    fontSize: 16,
+    color: '#345c9c',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginVertical: 10,
   },
-  statsText: {
-    fontSize: 18,
-    marginVertical: 5,
-  },
-  sectionTitle: {
+  subtitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 10,
+    color: '#345c9c',
   },
-  eventItem: {
-    fontSize: 16,
+  snoreItem: {
+    backgroundColor: '#4a90e2',
+    padding: 15,
+    borderRadius: 10,
     marginVertical: 5,
-    paddingLeft: 10,
+  },
+  snoreText: {
+    color: '#FFF',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
-export default ResultadosHistoricos;
-
-/*import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { Audio } from 'expo-av';
-
-export default function App() {
-  const [recording, setRecording] = useState(null);
-  const [recordings, setRecordings] = useState([]);
-
-  // Iniciar la grabación
-  async function startRecording() {
-    try {
-      const perm = await Audio.requestPermissionsAsync();
-      if (perm.status === "granted") {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: true,
-          playsInSilentModeIOS: true
-        });
-        const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-        setRecording(recording);
-      } else {
-        console.log("Permisos no concedidos");
-      }
-    } catch (err) {
-      console.error("Error al iniciar la grabación", err);
-    }
-  }
-
-  // Detener la grabación
-  async function stopRecording() {
-    setRecording(undefined);
-
-    try {
-      await recording.stopAndUnloadAsync();
-      const { sound, status } = await recording.createNewLoadedSoundAsync();
-      const newRecording = {
-        sound: sound,
-        duration: getDurationFormatted(status.durationMillis),
-        file: recording.getURI()
-      };
-      setRecordings([...recordings, newRecording]);
-    } catch (err) {
-      console.error("Error al detener la grabación", err);
-    }
-  }
-
-  // Formatear la duración
-  function getDurationFormatted(milliseconds) {
-    const minutes = Math.floor(milliseconds / 1000 / 60);
-    const seconds = Math.round((milliseconds / 1000) % 60);
-    return seconds < 10 ? `${minutes}:0${seconds}` : `${minutes}:${seconds}`;
-  }
-
-  // Generar la lista de grabaciones
-  function getRecordingLines() {
-    return recordings.map((recordingLine, index) => {
-      return (
-        <View key={index} style={styles.row}>
-          <Text style={styles.fill}>
-            Recording #{index + 1} | {recordingLine.duration}
-          </Text>
-          <Button onPress={() => recordingLine.sound.replayAsync()} title="Play"></Button>
-        </View>
-      );
-    });
-  }
-
-  // Limpiar las grabaciones
-  function clearRecordings() {
-    setRecordings([]);
-  }
-
-  return (
-    <View style={styles.container}>
-      <Button 
-        title={recording ? 'Stop Recording' : 'Start Recording'} 
-        onPress={recording ? stopRecording : startRecording} 
-      />
-      {getRecordingLines()}
-      {recordings.length > 0 && (
-        <Button title="Clear Recordings" onPress={clearRecordings} />
-      )}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  fill: {
-    flex: 1,
-    textAlign: 'center',
-  }
-});*/
+export default SnoreScreen;

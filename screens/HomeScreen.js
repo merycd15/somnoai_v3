@@ -70,9 +70,9 @@ const HomeScreen = () => {
         <View style={styles.cardsContainer}>
           {[
             { id: '1', name: 'Centros Médicos', screen: 'CentersScreen', icon: require('../assets/centers.png') },
-            { id: '2', name: 'Histórico', screen: 'AudioRecorderPlayer', icon: require('../assets/history.png') },
-            { id: '3', name: 'Detalle del Sueño', screen: 'MyDreamScreen', icon: require('../assets/myDream.png') },
-            { id: '4', name: 'Estadísticas', screen: 'StatisticsScreen', icon: require('../assets/info.png') },
+            { id: '2', name: 'Estadísticas', screen: 'StatisticsScreen', icon: require('../assets/myDream.png') },
+            { id: '3', name: 'Históricos', screen: 'HistoricosScreen', icon: require('../assets/history.png') },
+            { id: '4', name: 'Laboratorio del ronquido', screen: 'AudioRecorderPlayer', icon: require('../assets/lab.png') },
           ].map((item) => (
             <TouchableOpacity
               key={item.id}
