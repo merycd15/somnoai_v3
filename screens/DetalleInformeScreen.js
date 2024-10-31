@@ -11,7 +11,7 @@ import {
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 
-const informeFicticio = {
+/*const informeFicticio = {
   resultado_apnea: "No hay apnea",
   promedio_oxigeno: 65.71,
   evaluacion_oxigeno: "Saturación de oxígeno baja",
@@ -19,7 +19,17 @@ const informeFicticio = {
   evaluacion_heart_rate: "Frecuencia cardíaca normal",
   promedio_breathing: 6,
   evaluacion_breathing: "Respiración baja",
+};*/
+const informeFicticio = {
+  resultado_apnea: "Positivo para apnea del sueño",
+  promedio_oxigeno: 88.2,
+  evaluacion_oxigeno: "Saturación de oxígeno baja",
+  promedio_heart_rate: 105.4,
+  evaluacion_heart_rate: "Frecuencia cardíaca elevada",
+  promedio_breathing: 25,
+  evaluacion_breathing: "Respiración irregular",
 };
+
 
 const DetalleInformeScreen = ({ route }) => {
   const { date } = route.params;

@@ -23,23 +23,23 @@ const SnoreScreen = () => {
     { 
       id: '1', 
       date: '2024-10-28', 
-      audio: require('../assets/ronquidos/Ronquido1-normal.wav'), 
-      spectroData: [10, 20, 15, 25, 30, 28], 
-      analysis: 'Ronquido dentro del rango normal.' 
+      audio: require('../assets/ronquidos/salamisound-5789888-loud-snoring-sleep-apnea.wav'), 
+      spectroData: [40, 54, 55, 55, 90, 48], 
+      analysis: 'Ronquido con frecuencia alta. Consulte a Snoory por sugerencias.' 
     },
     { 
       id: '2', 
       date: '2024-10-27', 
       audio: require('../assets/ronquidos/Prueba.wav'), 
       spectroData: [40, 50, 45, 55, 60, 58], 
-      analysis: 'Ronquido con frecuencia alta. Consulte a un médico.' 
+      analysis: 'Ronquido con frecuencia alta. CConsulte a Snoory por sugerencias.' 
     },
     { 
       id: '', 
       date: '2024-10-26', 
-      audio: require('../assets/ronquidos/salamisound-5789888-loud-snoring-sleep-apnea.wav'), 
-      spectroData: [40, 54, 55, 55, 90, 48], 
-      analysis: 'Ronquido con frecuencia alta. Consulte a un médico.' 
+      audio: require('../assets/ronquidos/Ronquido1-normal.wav'), 
+      spectroData: [10, 20, 15, 25, 30, 28], 
+      analysis: 'Ronquido dentro del rango normal.' 
     },
   ];
 

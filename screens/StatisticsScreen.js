@@ -27,7 +27,7 @@ const StatisticsScreen = () => {
         });
         const backendData = response.data;
 
-        const data = {
+        /*const data = {
           resultado_apnea: backendData.resultado_apnea ?? '-',
           heart_rate: backendData.promedio_heart_rate != null ? backendData.promedio_heart_rate.toFixed(2) : '-',
           spo2: backendData.promedio_oxigeno != null ? backendData.promedio_oxigeno.toFixed(2) : '-',
@@ -35,7 +35,17 @@ const StatisticsScreen = () => {
           evaluacion_oxigeno: backendData.evaluacion_oxigeno ?? '-',
           evaluacion_heart_rate: backendData.evaluacion_heart_rate ?? '-',
           evaluacion_breathing: backendData.evaluacion_breathing ?? '-',
+        };*/
+        const data = {
+          resultado_apnea: "Positivo para apnea del sueño",
+          heart_rate: "105.40",
+          spo2: "88.20",
+          respiratory_rate: "25.00",
+          evaluacion_oxigeno: "Saturación de oxígeno baja",
+          evaluacion_heart_rate: "Frecuencia cardíaca elevada",
+          evaluacion_breathing: "Respiración irregular",
         };
+        
 
         setSleepData(data);
       } catch (error) {
