@@ -21,13 +21,16 @@ const HistoricosScreen = () => {
         const response = await axios.get('https://proyectosomnoai.onrender.com/SomnoAI/informesHistoricos/');
         setInformes(response.data || []);
       } catch (error) {
-        console.error('Error al obtener los informes:', error);
+        
         setInformes([
-          { id: 1, date: '01/10/2024' },
-          { id: 2, date: '02/10/2024' },
-          { id: 3, date: '03/10/2024' },
-          { id: 4, date: '04/10/2024' },
-          { id: 5, date: '05/10/2024' }
+          { id: 1, date: '31/10/2024' },
+          { id: 2, date: '30/10/2024' },
+          { id: 3, date: '29/10/2024' },
+          { id: 4, date: '28/10/2024' },
+          { id: 5, date: '27/10/2024' },
+          { id: 6, date: '26/10/2024' },
+          { id: 7, date: '25/10/2024' },
+          { id: 8, date: '24/10/2024' },
         ]); // Si hay error, aseguramos estado vacío
       } finally {
         setLoading(false);

@@ -10,15 +10,10 @@ const HomeScreen = () => {
   const fadeAnim = useState(new Animated.Value(0))[0];
   const navigation = useNavigation();
 
-  /*const sleepScore = 85;
+  const sleepScore = 85;
   const observations = [
     'Tu puntuación de sueño bajó un 10%. Intenta acostarte más temprano.',
     'Detectamos 5 eventos apneicos. Te recomendamos hablar con un médico.',
-  ];*/
-  const sleepScore = 70;
-  const observations = [
-    'Tu puntuación de sueño ha bajado un 15%. Intenta mantener una rutina de sueño regular.',
-    'Detectamos 8 eventos apneicos durante la noche. Te recomendamos hablar con un especialista en sueño.',
   ];
 
   useEffect(() => {

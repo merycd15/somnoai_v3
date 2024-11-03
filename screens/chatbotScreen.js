@@ -31,19 +31,14 @@ const ChatbotScreen = () => {
         const data = response.data;
         setBackendData(data);
 
-        /*const userMessage = `
+        const userMessage = `
           **Resultados del análisis**:
           - **Apnea**: ${data.resultado_apnea}
           - **Oxigenación**: ${data.promedio_oxigeno}% (${data.evaluacion_oxigeno})
           - **Frecuencia cardíaca**: ${data.promedio_heart_rate} bpm (${data.evaluacion_heart_rate})
           - **Respiración**: ${data.promedio_breathing} respiraciones/min (${data.evaluacion_breathing})
-        `;*/
-        const userMessage = ` Resultados del análisis:
-          - Apnea: Positivo
-          - Oxigenación: 88% (Bajo)
-          - Frecuencia cardíaca: 110 bpm (Alta)
-          - Respiración: 25 respiraciones/min (Irregular)
         `;
+       
 
 
         addMessage(userMessage, 'user');
