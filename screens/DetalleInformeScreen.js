@@ -11,28 +11,48 @@ import {
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 
-/*const informeFicticio = {
-  resultado_apnea: "No hay apnea",
-  promedio_oxigeno: 65.71,
-  evaluacion_oxigeno: "Saturación de oxígeno baja",
-  promedio_heart_rate: 67.91,
-  evaluacion_heart_rate: "Frecuencia cardíaca normal",
-  promedio_breathing: 6,
-  evaluacion_breathing: "Respiración baja",
-};*/
-const informeFicticio = {
-  resultado_apnea: "Positivo para apnea del sueño",
-  promedio_oxigeno: 88.2,
-  evaluacion_oxigeno: "Saturación de oxígeno baja",
-  promedio_heart_rate: 105.4,
-  evaluacion_heart_rate: "Frecuencia cardíaca elevada",
-  promedio_breathing: 25,
-  evaluacion_breathing: "Respiración irregular",
-};
-
-
 const DetalleInformeScreen = ({ route }) => {
-  const { date } = route.params;
+  const { date, username } = route.params;
+
+  // Normalizamos el username para evitar errores de mayúsculas o espacios
+  const normalizedUsername = username?.trim().toLowerCase();
+
+  // Generador dinámico de datos para el informe
+  const generateInforme = (isPositive) => {
+    const randomValue = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
+    if (isPositive) {
+      return {
+        resultado_apnea: "No hay apnea",
+        promedio_oxigeno: randomValue(94, 96),
+        evaluacion_oxigeno: "Saturación de oxígeno normal",
+        promedio_heart_rate: randomValue(65, 70),
+        evaluacion_heart_rate: "Frecuencia cardíaca normal",
+        promedio_breathing: randomValue(11, 13),
+        evaluacion_breathing: "Respiración estable",
+        conclusion: "Sigue así, tus parámetros son óptimos y no se detectaron problemas.",
+        consejo: "Mantén tus buenos hábitos para seguir mejorando tu descanso.",
+      };
+    } else {
+      return {
+        resultado_apnea: "Positivo para apnea del sueño",
+        promedio_oxigeno: randomValue(85, 89),
+        evaluacion_oxigeno: "Saturación de oxígeno baja",
+        promedio_heart_rate: randomValue(100, 110),
+        evaluacion_heart_rate: "Frecuencia cardíaca elevada",
+        promedio_breathing: randomValue(22, 27),
+        evaluacion_breathing: "Respiración irregular",
+        conclusion: "Los resultados indican problemas de apnea. Es recomendable realizar una consulta médica.",
+        consejo: "Evita la cafeína antes de dormir y prueba mantener una rutina constante de sueño.",
+      };
+    }
+  };
+
+  // Generamos los datos según el usuario
+  const informeFicticio = normalizedUsername === "fercardozo" 
+    ? generateInforme(true) // Informe positivo para fercardozo
+    : generateInforme(false); // Informe negativo para otros usuarios
+
+  
 
   const generatePDF = async () => {
     const htmlContent = `
@@ -48,9 +68,8 @@ const DetalleInformeScreen = ({ route }) => {
           <h2>Respiración</h2>
           <p>${informeFicticio.promedio_breathing} respiraciones/min - ${informeFicticio.evaluacion_breathing}</p>
           <h2>Conclusión</h2>
-          <p>Frecuencia máxima de 120 Hz observada en los ronquidos. 
-             Se recomienda realizar una evaluación médica si los niveles persisten.</p>
-          <p>Consejo: Reducir la ingesta de cafeína antes de dormir puede mejorar la respiración.</p>
+          <p>${informeFicticio.conclusion}</p>
+          <p><strong>Consejo:</strong> ${informeFicticio.consejo}</p>
         </body>
       </html>
     `;
@@ -89,13 +108,11 @@ const DetalleInformeScreen = ({ route }) => {
       <Image source={require('../assets/Frecuencias.png')} style={styles.image} />
 
       <Text style={styles.conclusionTitle}>Conclusión</Text>
+      <Text style={styles.conclusionText}>{informeFicticio.conclusion}</Text>
       <Text style={styles.conclusionText}>
-        Frecuencia máxima de 120 Hz observada en los ronquidos. 
-        Se recomienda realizar una evaluación médica si los niveles persisten.
-      </Text>
-      <Text style={styles.conclusionText}>
-        Consejo: Reducir la ingesta de cafeína antes de dormir puede mejorar la respiración.
-      </Text>
+     <Text style={styles.boldText}>Consejo:</Text> {informeFicticio.consejo}
+</Text>
+
 
       <TouchableOpacity style={styles.button} onPress={generatePDF}>
         <Text style={styles.buttonText}>Descargar Informe</Text>
@@ -148,6 +165,14 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#4A4A4A', // Color opcional para hacer énfasis
+  },
+  conclusionText: { 
+    fontSize: 16, 
+    marginVertical: 5 
   },
 });
 

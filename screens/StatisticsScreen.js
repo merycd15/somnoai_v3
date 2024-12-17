@@ -9,44 +9,34 @@ import {
   Modal, 
   Button 
 } from 'react-native';
-import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const StatisticsScreen = () => {
   const [sleepData, setSleepData] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedStat, setSelectedStat] = useState(null);
+
   const navigation = useNavigation();
+  const route = useRoute(); // Hook para acceder a los parámetros
+  const { username } = route.params || {}; // Extraemos el username
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.post('https://proyectosomnoai.onrender.com/SomnoAI/predecirApnea/', {
-          parametro: 'valor_cualquiera',
-        });
-        const backendData = response.data;
+    // Datos estáticos según el usuario
+    const generateStats = (isPositive) => ({
+      resultado_apnea: isPositive ? "No hay apnea" : "Apnea moderada detectada",
+      heart_rate: isPositive ? 67.91 : 80.5,
+      spo2: isPositive ? 95.11 : 88.5,
+      respiratory_rate: isPositive ? 11 : 6,
+      evaluacion_oxigeno: isPositive ? "Saturación de oxígeno normal" : "Saturación de oxígeno baja",
+      evaluacion_heart_rate: isPositive ? "Frecuencia cardíaca normal" : "Frecuencia cardíaca elevada",
+      evaluacion_breathing: isPositive ? "Respiración baja" : "Respiración muy baja",
+    });
 
-        const data = {
-          resultado_apnea: backendData.resultado_apnea ?? '-',
-          heart_rate: backendData.promedio_heart_rate != null ? backendData.promedio_heart_rate.toFixed(2) : '-',
-          spo2: backendData.promedio_oxigeno != null ? backendData.promedio_oxigeno.toFixed(2) : '-',
-          respiratory_rate: backendData.promedio_breathing != null ? backendData.promedio_breathing.toFixed(2) : '-',
-          evaluacion_oxigeno: backendData.evaluacion_oxigeno ?? '-',
-          evaluacion_heart_rate: backendData.evaluacion_heart_rate ?? '-',
-          evaluacion_breathing: backendData.evaluacion_breathing ?? '-',
-        };
-
-        
-
-        setSleepData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setSleepData({});
-      }
-    };
-    fetchData();
-  }, []);
+    // Verificamos el username
+    const statsData = username === "Fercardozo" ? generateStats(true) : generateStats(false);
+    setSleepData(statsData);
+  }, [username]);
 
   const handlePress = (stat) => {
     setSelectedStat(stat);
@@ -134,7 +124,7 @@ const StatisticsScreen = () => {
       </Modal>
 
       <View style={styles.historicosContainer}>
-        <Button title="Históricos" onPress={() => navigation.navigate('HistoricosScreen')} />
+        <Button title="Históricos" onPress={() => navigation.navigate('HistoricosScreen', { username: username})} />
       </View>
     </ScrollView>
   );
@@ -178,15 +168,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  statTextContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
   statsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFF',
-    marginBottom: 5,
   },
   statsValue: {
     fontSize: 22,

@@ -11,39 +11,53 @@ import {
 import { Audio } from 'expo-av';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 const SnoreScreen = () => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [snoreAnalysis, setSnoreAnalysis] = useState('');
 
+  const route = useRoute();
+  const { username } = route.params || {}; // Recibimos el username
   const screenWidth = Dimensions.get('window').width;
 
-  const snoreList = [
-    { 
-      id: '1', 
-      date: '2024-10-28', 
-      audio: require('../assets/ronquidos/salamisound-5789888-loud-snoring-sleep-apnea.wav'), 
-      spectroData: [40, 54, 55, 55, 90, 48], 
-      analysis: 'Ronquido con frecuencia alta. Consulte a Snoory por sugerencias.' 
-    },
-    { 
-      id: '2', 
-      date: '2024-10-27', 
-      audio: require('../assets/ronquidos/Prueba.wav'), 
-      spectroData: [40, 50, 45, 55, 60, 58], 
-      analysis: 'Ronquido con frecuencia alta. CConsulte a Snoory por sugerencias.' 
-    },
-    { 
-      id: '', 
-      date: '2024-10-26', 
-      audio: require('../assets/ronquidos/Ronquido1-normal.wav'), 
-      spectroData: [10, 20, 15, 25, 30, 28], 
-      analysis: 'Ronquido dentro del rango normal.' 
-    },
-  ];
-
   const NORMAL_THRESHOLD = 30;
+
+  // Datos dinámicos según el usuario
+  const snoreList = username === 'Flopez'
+    ? [
+        { 
+          id: '1', 
+          date: '2024-12-17', 
+          audio: require('../assets/ronquidos/salamisound-5789888-loud-snoring-sleep-apnea.wav'), 
+          spectroData: [40, 54, 55, 55, 90, 48], 
+          analysis: 'Ronquido con frecuencia alta. Consulta a Snoory por sugerencias.' 
+        },
+        { 
+          id: '2', 
+          date: '2024-12-16', 
+          audio: require('../assets/ronquidos/snorking05-34816.wav'), 
+          spectroData: [30, 50, 40, 60, 70, 58], 
+          analysis: 'Ronquido con frecuencia alta. Consulta a Snoory por sugerencias.' 
+        },
+      ]
+    : [
+        { 
+          id: '1', 
+          date: '2024-12-17', 
+          audio: require('../assets/ronquidos/Prueba.wav'), 
+          spectroData: [40, 50, 45, 55, 60, 58], 
+          analysis: 'Ronquido dentro del rango normal.' 
+        },
+        { 
+          id: '2', 
+          date: '2024-12-16', 
+          audio: require('../assets/ronquidos/Ronquido1-normal.wav'), 
+          spectroData: [10, 20, 15, 25, 30, 28], 
+          analysis: 'Ronquido leve y dentro del rango esperado.' 
+        },
+      ];
 
   const playSnore = async (audio, analysis) => {
     try {
@@ -105,35 +119,6 @@ const SnoreScreen = () => {
             }}
             style={styles.chart}
             bezier
-            withHorizontalLines
-            segments={6}
-            yAxisSuffix="dB"
-            yAxisInterval={10} // Cada línea horizontal representa 10dB
-            renderDotContent={({ x, y }) => (
-              <View 
-                style={{ 
-                  position: 'absolute', 
-                  top: y - 6, 
-                  left: x - 6, 
-                  backgroundColor: 'red', 
-                  borderRadius: 6, 
-                  width: 12, 
-                  height: 12 
-                }} 
-              />
-            )}
-            decorator={() => (
-              <View
-                style={{
-                  position: 'absolute',
-                  top: 220 - (NORMAL_THRESHOLD * 220) / 60,
-                  left: 0,
-                  right: 0,
-                  height: 2,
-                  backgroundColor: 'green',
-                }}
-              />
-            )}
           />
 
           <TouchableOpacity

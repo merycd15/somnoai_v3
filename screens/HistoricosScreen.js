@@ -9,11 +9,15 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { useRoute } from '@react-navigation/native';
 
 const HistoricosScreen = () => {
   const [informes, setInformes] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const route = useRoute();
+  const { username } = route.params || {};
+  console.log(username)
 
   useEffect(() => {
     const fetchHistoricos = async () => {
@@ -23,14 +27,14 @@ const HistoricosScreen = () => {
       } catch (error) {
         
         setInformes([
-          { id: 1, date: '31/10/2024' },
-          { id: 2, date: '30/10/2024' },
-          { id: 3, date: '29/10/2024' },
-          { id: 4, date: '28/10/2024' },
-          { id: 5, date: '27/10/2024' },
-          { id: 6, date: '26/10/2024' },
-          { id: 7, date: '25/10/2024' },
-          { id: 8, date: '24/10/2024' },
+          { id: 1, date: '17/12/2024' },
+          { id: 2, date: '16/12/2024' },
+          { id: 3, date: '15/12/2024' },
+          { id: 4, date: '14/12/2024' },
+          { id: 5, date: '13/12/2024' },
+          { id: 6, date: '12/12/2024' },
+          { id: 7, date: '11/12/2024' },
+          { id: 8, date: '10/12/2024' },
         ]); // Si hay error, aseguramos estado vacío
       } finally {
         setLoading(false);
@@ -60,7 +64,7 @@ const HistoricosScreen = () => {
             key={informe.id}
             style={styles.informeItem}
             onPress={() =>
-              navigation.navigate('DetalleInformeScreen', { date: informe.date, id: informe.id })
+              navigation.navigate('DetalleInformeScreen', { date: informe.date, id: informe.id, username })
             }
           >
             <Text style={styles.informeText}>Informe {informe.date}</Text>

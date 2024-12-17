@@ -131,7 +131,14 @@ const HomeScreen = () => {
             <TouchableOpacity
               key={item.id}
               style={styles.card}
-              onPress={() => navigation.navigate(item.screen)}
+              onPress={() => {
+                if (item.screen === 'HistoricosScreen' || item.screen === 'StatisticsScreen' || item.screen === 'AudioRecorderPlayer' ) {
+                  // Pasamos el username a HistoricosScreen
+                  navigation.navigate(item.screen, { username });
+                } else {
+                  navigation.navigate(item.screen);
+                }
+              }}
             >
               <Image source={item.icon} style={styles.cardIcon} />
               <Text style={styles.cardText}>{item.name}</Text>
@@ -143,7 +150,7 @@ const HomeScreen = () => {
           <Image source={require('../assets/chatbot.jpg')} style={styles.chatbotIcon} />
           <TouchableOpacity
             style={styles.chatbotButton}
-            onPress={() => navigation.navigate('chatbotScreen')}
+            onPress={() => navigation.navigate('chatbotScreen',{ username:username })}
           >
             <Text style={styles.chatbotText}>💬 Habla con Snoory</Text>
           </TouchableOpacity>
