@@ -5,25 +5,36 @@ import {
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import ProgressBar from 'react-native-progress/Bar';
+import { useRoute } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const [greeting, setGreeting] = useState('¡Buenas noches!');
   const fadeAnim = useState(new Animated.Value(0))[0];
   const navigation = useNavigation();
+  const route = useRoute(); // Hook para acceder a los parámetros
+  const { username } = route.params || {}; // Recibimos el parámetro 'username'
 
-  const sleepScore = 85;
+  const results = username === "Flopez"
+    ? { // Datos para flopez (apnea)
+        resultado_apnea: "Apnea moderada detectada",
+        promedio_oxigeno: 88.5,
+        evaluacion_oxigeno: "Saturación de oxígeno baja",
+        promedio_heart_rate: 80.5,
+        evaluacion_heart_rate: "Frecuencia cardíaca elevada",
+        promedio_breathing: 6.0,
+        evaluacion_breathing: "Respiración muy baja",
+      }
+    : { // Datos para fercardozo (sin apnea)
+        resultado_apnea: "No hay apnea",
+        promedio_oxigeno: 95.11225,
+        evaluacion_oxigeno: "Saturación de oxígeno normal",
+        promedio_heart_rate: 67.91,
+        evaluacion_heart_rate: "Frecuencia cardíaca normal",
+        promedio_breathing: 11.0,
+        evaluacion_breathing: "Respiración baja",
+      };
 
-  // Resultados del análisis fisiológico
-  const results = {
-    resultado_apnea: "No hay apnea",
-    promedio_oxigeno: 95.11225,
-    evaluacion_oxigeno: "Saturación de oxígeno normal",
-    promedio_heart_rate: 67.91,
-    evaluacion_heart_rate: "Frecuencia cardíaca normal",
-    promedio_breathing: 11.0,
-    evaluacion_breathing: "Respiración baja",
-  };
-
+  const sleepScore = username === "Flopez" ? 55 : 85;
   // Observaciones dinámicas
   const observations = [];
   if (results.resultado_apnea === "No hay apnea") {

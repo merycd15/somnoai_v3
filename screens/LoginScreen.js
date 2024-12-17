@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
+
 const LoginScreen = () => {
   const [error, setError] = useState('');
   const [username, setUsername] = useState('');
@@ -39,7 +40,7 @@ const LoginScreen = () => {
       });
 
       if (response.data.message === 'Inicio de sesión exitoso.') {
-        navigation.navigate('Home');
+        navigation.navigate('Home', { username: username});
       } else {
         setError(response.data.error || 'Error en el inicio de sesión.');
       }
