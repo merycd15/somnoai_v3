@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import ProgressBar from 'react-native-progress/Bar';
 
 const HomeScreen = () => {
   const [greeting, setGreeting] = useState('¡Buenas noches!');
@@ -11,10 +12,44 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   const sleepScore = 85;
-  const observations = [
-    'Tu puntuación de sueño bajó un 10%. Intenta acostarte más temprano.',
-    'Detectamos 5 eventos apneicos. Te recomendamos hablar con un médico.',
-  ];
+
+  // Resultados del análisis fisiológico
+  const results = {
+    resultado_apnea: "No hay apnea",
+    promedio_oxigeno: 95.11225,
+    evaluacion_oxigeno: "Saturación de oxígeno normal",
+    promedio_heart_rate: 67.91,
+    evaluacion_heart_rate: "Frecuencia cardíaca normal",
+    promedio_breathing: 11.0,
+    evaluacion_breathing: "Respiración baja",
+  };
+
+  // Observaciones dinámicas
+  const observations = [];
+  if (results.resultado_apnea === "No hay apnea") {
+    observations.push("¡Buen trabajo! No se detectaron eventos de apnea.");
+  } else {
+    observations.push("Atención: Se detectó apnea del sueño. Consulta a un médico.");
+  }
+
+  if (results.evaluacion_breathing.includes("baja")) {
+    observations.push("Tu ritmo de respiración es más bajo de lo normal. Monitorea tus hábitos de sueño.");
+  }
+
+  if (results.evaluacion_oxigeno.includes("normal")) {
+    observations.push("La saturación de oxígeno es excelente, sigue así.");
+  }
+
+  if (results.evaluacion_heart_rate.includes("normal")) {
+    observations.push("Tu frecuencia cardíaca se encuentra dentro de un rango saludable.");
+  }
+
+  // Función para determinar el color de la barra según el puntaje
+  const getBarColor = (score) => {
+    if (score >= 80) return '#4CAF50'; // Verde: Excelente
+    if (score >= 60) return '#FFEB3B'; // Amarillo: Regular
+    return '#F44336'; // Rojo: Malo
+  };
 
   useEffect(() => {
     // Animación de fade-in al cargar la pantalla.
@@ -47,13 +82,21 @@ const HomeScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Tarjeta de Puntaje */}
-        <Card style={styles.scoreCard}>
-          <Text style={styles.scoreTitle}>Puntuación del Sueño</Text>
-          <View style={styles.scoreContainer}>
-            <Text style={styles.score}>{sleepScore}</Text>
-          </View>
-        </Card>
+        {/* Gráfico de Barras */}
+        <Text style={styles.sectionTitle}>Calidad del Sueño</Text>
+        <View style={styles.barContainer}>
+          <ProgressBar
+            progress={sleepScore / 100} // Convertimos el puntaje a decimal
+            width={Dimensions.get('window').width - 40}
+            color={getBarColor(sleepScore)}
+            borderRadius={10}
+            height={20}
+            animated={true}
+          />
+          <Text style={styles.scoreText}>
+            {sleepScore} - {sleepScore >= 80 ? 'Excelente' : sleepScore >= 60 ? 'Regular' : 'Malo'}
+          </Text>
+        </View>
 
         {/* Observaciones */}
         <View style={styles.observationsContainer}>
@@ -84,9 +127,8 @@ const HomeScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
-
-        {/* Sección del Chatbot */}
-        <View style={styles.chatbotContainer}>
+          {/* Sección del Chatbot */}
+          <View style={styles.chatbotContainer}>
           <Image source={require('../assets/chatbot.jpg')} style={styles.chatbotIcon} />
           <TouchableOpacity
             style={styles.chatbotButton}
@@ -127,34 +169,23 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
-  scoreCard: {
-    backgroundColor: '#1b50a6',
-    padding: 15,
-    borderRadius: 15,
-    marginBottom: 10,
-    elevation: 5,
-  },
-  scoreTitle: {
-    fontSize: 18,
-    color: '#FFF',
-    textAlign: 'center',
-  },
-  scoreContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  score: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#00FF00',
-  },
-  observationsContainer: {
-    marginBottom: 10,
-  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#345c9c',
+    marginBottom: 10,
+  },
+  barContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  scoreText: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#333',
+  },
+  observationsContainer: {
     marginBottom: 10,
   },
   observationCard: {
